@@ -1,2 +1,2 @@
-import sy
+import sys
 from PyQt5.QtWidgets import *
