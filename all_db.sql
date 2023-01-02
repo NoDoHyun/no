@@ -1,1 +1,1 @@
-create database crime;
+select * from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`
