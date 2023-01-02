@@ -1,1 +1,1 @@
-select * from `광주광역시_자치구별 현황_20210731`
+create database crime;
