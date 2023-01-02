@@ -2,10 +2,10 @@ import pymysql
 import sqlite3
 conn = pymysql.connect(host='localhost',
                        port=3306,
-                       user='guest',
+                       user='root',
                        passwd='1234',
                        db='all.db')
 
 c = conn.cursor()
 
-sqlite3 all.db -batch ".dump" > my_db.sql
+c.execute('select * from "경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231"')
