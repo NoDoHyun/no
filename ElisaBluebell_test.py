@@ -70,8 +70,6 @@ font = font_manager.FontProperties(fname=font_path).get_name()
 # 폰트 설정
 rc('font', family=font)
 
-# =======================================================설정=======================================================
-
 # 변수 선언
 # 각 자치구별 현황
 dong_status = []
@@ -100,34 +98,40 @@ def insert_crime(goo_crime, goo_number):
         goo_crime.append(a[goo_number][i])
 
 
+# 함수를 실행해 각 리스트에 데이터 입력
 insert_status(dong_status, 0)
 insert_status(seo_status, 2)
 insert_status(nam_status, 1)
 insert_status(book_status, 4)
 insert_status(gwangsan_status, 3)
-
 insert_crime(dong_crime, 0)
 insert_crime(seo_crime, 2)
 insert_crime(nam_crime, 1)
 insert_crime(book_crime, 4)
 insert_crime(gwangsan_crime, 3)
 
-print(dong_status)
-print(seo_status)
-print(nam_status)
-print(book_status)
-print(gwangsan_status)
+crime_status = ['인구 대비 범죄건수', '인구밀도 대비 범죄건수', '공무원당 시민수 대비 범죄건수']
+
+# ====================================================데이터 핸들링====================================================
 
 # 그래프 제목
-plt.title('광주광역시 자치구별 현황')
+plt.title('인구 대비 범죄건수')
 # 그래프 막대의 두께 설정
-bar_width = 0.1
+bar_width = 0.35
 # 그래프의 x축을 담당할 라벨 설정
-label = ['동구', '서구', '남구', '북구', '광산구']
+goo_label = ['동구', '서구', '남구', '북구', '광산구']
 # 그래프 간격 설정
-space = np.arange(len(label))
+space = np.arange(len(goo_label))
 
-plt.bar(['광산구', '북구', '서구', '동구'], [10, 20, 30, 40], label='커짐', width=bar_width)
+
+plt.bar('동구', dong_crime[0], width=bar_width)
+plt.bar('서구', seo_crime[0], width=bar_width)
+plt.bar('남구', nam_crime[0], width=bar_width)
+plt.bar('북구', book_crime[0], width=bar_width)
+plt.bar('광산구', gwangsan_crime[0], width=bar_width)
+# plt.bar(goo_label, [10, 20, 30, 40, 50], label='인구수', width=bar_width)
+
+
 # plt.bar(bar_width + 1, [20, 30, 40, 10], label='', width=bar_width)
-plt.legend()
+# plt.legend()
 plt.show()
