@@ -8,6 +8,8 @@ import numpy as np
 from matplotlib import font_manager, rc
 from PyQt5.QtWidgets import *
 
+# =======================================================설정=======================================================
+
 # mysql 로그인 및 db 획득
 conn = pymysql.connect(host='localhost',
                        port=3306,
@@ -54,9 +56,12 @@ c.execute('select a.구분, a.세대수, a.`인구(명)`, a.`공무원(명)`, a.
           # 1번째 순서를 제외한 5개 출력으로 시 경찰청 제외한 나머지 출력 
           ' limit 1, 5')
 
-#
+# 테스트용 출력
+# 0 동구 1 남구 2 서구 3 광산구 4 북구
+# 0 구명 1 세대수 2 인구(명) 3 공무원(명) 4 면적(제곱킬로미터) 5 공무원 1인당 인구(명) 6 인구밀도(명/제곱킬로미터)
+# 7 범죄 발생건수 8 범죄 발생건수/인구(명) 9 범죄 발생건수/인구밀도 10 범죄 발생건수/공무원 1인당 시민 수
 a = c.fetchall()
-print(a[0][8])
+print(a)
 
 # 한글 폰트 사용을 위해서 세팅, 폰트 경로 설정
 font_path = "C:\\Windows\\Fonts\\gulim.ttc"
@@ -64,6 +69,54 @@ font_path = "C:\\Windows\\Fonts\\gulim.ttc"
 font = font_manager.FontProperties(fname=font_path).get_name()
 # 폰트 설정
 rc('font', family=font)
+
+# =======================================================설정=======================================================
+
+# 변수 선언
+# 각 자치구별 현황
+dong_status = []
+seo_status = []
+nam_status = []
+book_status = []
+gwangsan_status = []
+
+# 각 자치구별 범죄 현황
+dong_crime = []
+seo_crime = []
+nam_crime = []
+book_crime = []
+gwangsan_crime = []
+
+
+# 구별 현황 삽입 함수, i=0~7까지
+def insert_status(goo_status, goo_number):
+    for i in range(8):
+        goo_status.append(a[goo_number][i])
+
+
+# 구별 변수 대비 범죄율 삽입 함수, i=8~10까지
+def insert_crime(goo_crime, goo_number):
+    for i in range(8, 11):
+        goo_crime.append(a[goo_number][i])
+
+
+insert_status(dong_status, 0)
+insert_status(seo_status, 2)
+insert_status(nam_status, 1)
+insert_status(book_status, 4)
+insert_status(gwangsan_status, 3)
+
+insert_crime(dong_crime, 0)
+insert_crime(seo_crime, 2)
+insert_crime(nam_crime, 1)
+insert_crime(book_crime, 4)
+insert_crime(gwangsan_crime, 3)
+
+print(dong_status)
+print(seo_status)
+print(nam_status)
+print(book_status)
+print(gwangsan_status)
 
 # 그래프 제목
 plt.title('광주광역시 자치구별 현황')
@@ -73,9 +126,6 @@ bar_width = 0.1
 label = ['동구', '서구', '남구', '북구', '광산구']
 # 그래프 간격 설정
 space = np.arange(len(label))
-
-# 막대그래프 생성
-# plt.bar(space, tips_sum_by_day)
 
 plt.bar(['광산구', '북구', '서구', '동구'], [10, 20, 30, 40], label='커짐', width=bar_width)
 # plt.bar(bar_width + 1, [20, 30, 40, 10], label='', width=bar_width)
