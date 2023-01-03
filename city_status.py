@@ -1,4 +1,5 @@
 import sys
+import matplotlib.pyplot as plt
 import pymysql
 from PyQt5.QtWidgets import *
 
@@ -39,13 +40,15 @@ class CityStatus(QWidget):
         pass
 
     def set_button(self):
-        pass
+        self.back_btn = QPushButton('돌아가기', self)
+        self.back_btn.setGeometry(700, 560, 80, 20)
 
     def set_line(self):
         pass
 
     def calc(self):
         pass
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
