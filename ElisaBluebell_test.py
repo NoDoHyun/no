@@ -1,3 +1,5 @@
+# =======================================================설정=======================================================
+
 import sys
 # DB 사용을 위해 세팅
 import pymysql
@@ -9,6 +11,7 @@ from matplotlib import font_manager, rc
 from PyQt5.QtWidgets import *
 
 # =======================================================설정=======================================================
+# ===================================================데이터 핸들링===================================================
 
 # mysql 로그인 및 db 획득
 conn = pymysql.connect(host='localhost',
@@ -110,28 +113,100 @@ insert_crime(nam_crime, 1)
 insert_crime(book_crime, 4)
 insert_crime(gwangsan_crime, 3)
 
-crime_status = ['인구 대비 범죄건수', '인구밀도 대비 범죄건수', '공무원당 시민수 대비 범죄건수']
+item_list = ['인구(명)', '인구밀도', '공무원 1인당 인구수', '인구 대비 범죄건수', '인구밀도 대비 범죄건수',
+             '공무원당 시민수 대비 범죄건수']
+
 
 # ====================================================데이터 핸들링====================================================
+# ==============================================인구 대비 범죄 건수 그래프==============================================
+
+# # 그래프 제목
+# plt.title('인구 대비 범죄건수')
+# # 그래프 막대의 두께 설정
+# bar_width = 0.35
+# # 그래프의 x축을 담당할 라벨 설정
+# goo_label = ['동구', '서구', '남구', '북구', '광산구']
+# # 그래프 간격 설정
+# space = np.arange(len(goo_label))
+#
+#
+# plt.bar('동구', dong_crime[0], width=bar_width)
+# plt.bar('서구', seo_crime[0], width=bar_width)
+# plt.bar('남구', nam_crime[0], width=bar_width)
+# plt.bar('북구', book_crime[0], width=bar_width)
+# plt.bar('광산구', gwangsan_crime[0], width=bar_width)
+#
+# plt.show()
+
+# ==============================================인구 대비 범죄 건수 그래프==============================================
+# ============================================인구밀도 대비 범죄 건수 그래프============================================
+
+# # 그래프 제목
+# plt.title('인구밀도 대비 범죄건수')
+# # 그래프 막대의 두께 설정
+# bar_width = 0.35
+# # 그래프의 x축을 담당할 라벨 설정
+# goo_label = ['동구', '서구', '남구', '북구', '광산구']
+# # 그래프 간격 설정
+# space = np.arange(len(goo_label))
+#
+#
+# plt.bar('동구', dong_crime[1], width=bar_width)
+# plt.bar('서구', seo_crime[1], width=bar_width)
+# plt.bar('남구', nam_crime[1], width=bar_width)
+# plt.bar('북구', book_crime[1], width=bar_width)
+# plt.bar('광산구', gwangsan_crime[1], width=bar_width)
+#
+# plt.show()
+
+# ============================================인구밀도 대비 범죄 건수 그래프============================================
+# ======================================공무원 1인당 인구수 대비 범죄 건수 그래프======================================
+
+# # 그래프 제목
+# plt.title('공무원 1인당 인구수 대비 범죄 건수')
+# # 그래프 막대의 두께 설정
+# bar_width = 0.35
+# # 그래프의 x축을 담당할 라벨 설정
+# goo_label = ['동구', '서구', '남구', '북구', '광산구']
+# # 그래프 간격 설정
+# space = np.arange(len(goo_label))
+#
+#
+# plt.bar('동구', dong_crime[2], width=bar_width)
+# plt.bar('서구', seo_crime[2], width=bar_width)
+# plt.bar('남구', nam_crime[2], width=bar_width)
+# plt.bar('북구', book_crime[2], width=bar_width)
+# plt.bar('광산구', gwangsan_crime[2], width=bar_width)
+#
+# plt.show()
+
+# ======================================공무원 1인당 인구수 대비 범죄 건수 그래프======================================
+
+c.execute('select a.`인구(명)`, round(`인구(명)`/`면적(제곱킬로미터)`) as "인구밀도(명/제곱킬로미터)",'
+          ' round(`인구(명)`/`공무원(명)`)  as "공무원 1인당 인구(명)",'
+          ' (b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / a.`인구(명)` as "범죄 발생건수/인구(명)",'
+          ' (b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / round(`인구(명)`/`면적(제곱킬로미터)`)'
+          ' as "범죄 발생건수/인구밀도(명/km²)",'
+          ' (b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / (`인구(명)`/`공무원(명)`)'
+          ' as "범죄 발생건수/공무원 1인당 시민 수"'
+          ' from `crime`.`광주광역시_자치구별 현황_20210731` as a'
+          ' inner join `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` as b'
+          ' on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) group by 관서명')
+
+b = c.fetchall()
+
+
+# ======================================공무원 1인당 인구수 대비 범죄 건수 그래프======================================
 
 # 그래프 제목
-plt.title('인구 대비 범죄건수')
+plt.title('공무원 1인당 인구수 대비 범죄 건수')
 # 그래프 막대의 두께 설정
 bar_width = 0.35
-# 그래프의 x축을 담당할 라벨 설정
-goo_label = ['동구', '서구', '남구', '북구', '광산구']
-# 그래프 간격 설정
-space = np.arange(len(goo_label))
 
+plt.bar('동구', dong_crime[2], width=bar_width)
+plt.bar('서구', seo_crime[2], width=bar_width)
+plt.bar('남구', nam_crime[2], width=bar_width)
+plt.bar('북구', book_crime[2], width=bar_width)
+plt.bar('광산구', gwangsan_crime[2], width=bar_width)
 
-plt.bar('동구', dong_crime[0], width=bar_width)
-plt.bar('서구', seo_crime[0], width=bar_width)
-plt.bar('남구', nam_crime[0], width=bar_width)
-plt.bar('북구', book_crime[0], width=bar_width)
-plt.bar('광산구', gwangsan_crime[0], width=bar_width)
-# plt.bar(goo_label, [10, 20, 30, 40, 50], label='인구수', width=bar_width)
-
-
-# plt.bar(bar_width + 1, [20, 30, 40, 10], label='', width=bar_width)
-# plt.legend()
 plt.show()
