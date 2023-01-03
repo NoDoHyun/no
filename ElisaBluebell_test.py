@@ -11,5 +11,8 @@ conn = pymysql.connect(host='localhost',
 
 c = conn.cursor()
 
-plt.plot([1, 2, 3, 4], [12, 43, 25, 15])
+plt.title('plotting')
+plt.plot([10, 20, 30, 40], 'r.', label='asc')
+plt.plot([40, 30, 20, 10], 'g^', label='desc')
+plt.legend()
 plt.show()
