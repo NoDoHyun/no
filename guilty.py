@@ -34,7 +34,7 @@ class WindowClass(QMainWindow, form_class) :
                               db='crime', charset='utf8')  # 한글처리 (charset = 'utf8')
         cur = con.cursor()
         # sql = "Select * from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`"#case1
-        sql = "Select * from `crime`.`category`"  # case2
+        sql = "Select * from `crime`.`category` limit 5"  # case2
         cur.execute(sql)
         self.a = cur.fetchall()
     def next(self):
@@ -50,6 +50,9 @@ class WindowClass(QMainWindow, form_class) :
             self.fill2(word)
         else:
             self.fill()
+
+    # def new_data(self):
+
 
     def fill(self):
         count = 0
