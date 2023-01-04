@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="search">
@@ -73,32 +73,32 @@
      </column>
      <column>
       <property name="text">
-       <string>발생건수</string>
+       <string>인구(만)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>검거건수</string>
+       <string>범죄발생건수</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>검거인원</string>
+       <string>인구 1만명당 범죄 건수</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>구속</string>
+       <string>범죄 건수/면적(km²)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>불구속</string>
+       <string>검거율(%)</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>기타</string>
+       <string>카메라 1대당 인구수</string>
       </property>
      </column>
     </widget>

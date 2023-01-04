@@ -17,8 +17,7 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
         self.name=['광주북부경찰서','광주광산경찰서','광주서부경찰서','광주남부경찰서','광주동부경찰서']
-        self.name2=['경찰서','인구(만명)', '범죄발생건수', '범죄발생건수/만명', '범죄발생건수/km²', '검거율(%)',
-                    '검거건수', '카메라대수', '인구수/카메라대수']
+        self.name2=['경찰서','인구(만명)', '범죄발생건수', '범죄발생건수/만명', '범죄발생건수/km²', '검거건수', '검거율(%)', '카메라대수', '인구수/카메라대수']
         self.gwangsan.clicked.connect(self.num5)
         self.east.clicked.connect(self.num1)
         self.west.clicked.connect(self.num2)
