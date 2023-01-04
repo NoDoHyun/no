@@ -14,7 +14,10 @@ class WindowClass(QMainWindow, form_class) :
         super().__init__()
         self.setupUi(self)
         self.people_show()
+        self.cctv_list = []
         self.cctv_situation()
+        self.crime_situation()
+
 
     # 구별 인구수현황 mysql에서 가져오는 함수
     def people_situation(self):
@@ -43,50 +46,33 @@ class WindowClass(QMainWindow, form_class) :
 
     # 구별 cctv현황 mysql에서 가져오는 함수
     def cctv_situation(self):
-        # 광산
         conn = pymysql.connect(host='localhost',
                                port=3306,
                                user='root',
                                passwd='1234',
                                db='crime')
         c = conn.cursor()
-        c.execute("SELECT 소재지지번주소,카메라대수 FROM crime.광주광역시_cctv_20220429 where 소재지지번주소 like '%광산구%'")
+        c.execute("select sum(카메라대수) as 카메라대수, 소재지지번주소 as 구분 from `crime`.`광주광역시_cctv_20220429` group by 구분 order by 카메라대수 desc;")
         temp = c.fetchall()
-        self.gwangsancctv=0
-        for i in range(len(temp)):
-            self.gwangsancctv += temp[i][1]
+        for i in temp:
+            self.cctv_list.append(list(i))
 
-        # 북구
-        c.execute("SELECT 소재지지번주소,카메라대수 FROM crime.광주광역시_cctv_20220429 where 소재지지번주소 like '%북구%'")
+    def crime_situation(self):
+        conn = pymysql.connect(host='localhost',
+                               port=3306,
+                               user='root',
+                               passwd='1234',
+                               db='crime')
+        c = conn.cursor()
+        c.execute("update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='동구' where 관서명='광주동부경찰서';")
         temp = c.fetchall()
-        self.bukgucctv=0
-        for i in range(len(temp)):
-            self.bukgucctv += temp[i][1]
+        print(temp)
 
-        # 남구
-        c.execute("SELECT 소재지지번주소,카메라대수 FROM crime.광주광역시_cctv_20220429 where 소재지지번주소 like '%남구%'")
-        temp = c.fetchall()
-        self.namgucctv=0
-        for i in range(len(temp)):
-            self.namgucctv += temp[i][1]
-
-        # 서구
-        c.execute("SELECT 소재지지번주소,카메라대수 FROM crime.광주광역시_cctv_20220429 where 소재지지번주소 like '%서구%'")
-        temp = c.fetchall()
-        self.seogucctv=0
-        for i in range(len(temp)):
-            self.seogucctv += temp[i][1]
-
-        # 동구
-        c.execute("SELECT 소재지지번주소,카메라대수 FROM crime.광주광역시_cctv_20220429 where 소재지지번주소 like '%동구%'")
-        temp = c.fetchall()
-        self.dongucctv = 0
-        for i in range(len(temp)):
-            self.dongucctv += temp[i][1]
-        self.cctv_list=[['광주광역시 광산구',self.gwangsancctv],['광주광역시 북구',self.bukgucctv],['광주광역시 남구',self.namgucctv],['광주광역시 서구',self.seogucctv],['광주광역시 동구',self.dongucctv]]
 
 if __name__ == "__main__" :
     app = QApplication(sys.argv)    #QApplication : 프로그램을 실행시켜주는 클래스
     myWindow = WindowClass()        #WindowClass의 인스턴스 생성
     myWindow.show()                 #프로그램 화면을 보여주는 코드
     app.exec_()                     #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+
+        # "update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='동구' where 관서명='광주동부경찰서'; update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='서구' where 관서명='광주서부경찰서'; update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='북구' where 관서명='광주북부경찰서'; update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='광산구' where 관서명='광주광산경찰서'; update `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` set 관서명='남구' where 관서명='광주남부경찰서'; select 관서명 as 구분, sum(`살인`+`강도`+`강간-강제추행`+`절도`+`폭력`) as 범죄수 from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` group by 관서명 order by 범죄수 desc;")
