@@ -1,3 +1,4 @@
+# -- coding: utf-8 --
 import pymysql
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
@@ -33,42 +34,12 @@ class WindowClass(QMainWindow, form_class) :
         con = pymysql.connect(host='localhost', user='root', password='1234',
                               db='crime', charset='utf8')  # 한글처리 (charset = 'utf8')
         cur = con.cursor()
-        # sql = "Select * from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`"#case1
         sql = "Select * from `crime`.`category` limit 5"  # case2
         cur.execute(sql)
         self.a = cur.fetchall()
 
-        # sql = "Select * from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`"#case1
         # DB에서 경찰서명, 인구수(만명)
-        elisa_sql = ('select c.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", '
-               # 5대 범죄 발생건수를 합산해서 범죄발생건수로 명명해서 가져옴
-               'b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도 as 범죄발생건수, '
-               # 범죄 발생 건수를 인구*만명으로 나눈 값의 소수점을 버려 범죄율 계산
-               'round((b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / a.`인구(명)` * 10000) '
-               'as "인구 1만명당 범죄 건수", '
-               # 면적 대비 범죄율
-               '(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / `면적(제곱킬로미터)` '
-               'as "범죄 건수/면적(km²)", '
-               # 건거검수/범죄발생건수 = 검거율
-               'c.검거건수, c.검거건수/(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) * 100 '
-               'as "검거율(%)", '
-               # 18이 어디서 나왔는지 모르겠음. 18로 나누면 정상값이라 그냥 나눠서 가져옴
-               'round(sum(d.카메라대수)/18) as 카메라대수, a.`인구(명)`/(sum(d.카메라대수)/18) '
-               'as "카메라 1대당 인구수" '
-               # 1번 테이블 as a
-               'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
-               # 2번 테이블 as b
-               'inner join `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` as b '
-               # 3번 테이블 as c
-               'inner join `crime`.`category` as c '
-               # 4번 테이블 as d
-               'inner join `crime`.`광주광역시_cctv_20220429` as d '
-               # 접점 생성
-               'on mid(d.소재지지번주소, 7, 1) = mid(c.경찰서, 3, 1) '
-               'on mid(c.경찰서, 3, 1) = mid(b.관서명, 3, 1) '
-               'on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) '
-               # 관서명으로 묶고 범죄발생건수로 정렬해서 광주<광>역시경찰청을 제외한 구경찰서 5개 출력
-               'group by 관서명 order by 범죄발생건수 limit 1, 5')
+        elisa_sql = ('select c.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도 as 범죄발생건수, round((b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / a.`인구(명)` * 10000) as "인구 1만명당 범죄 건수", (b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", c.검거건수, c.검거건수/(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) * 100 as "검거율(%)", round(sum(d.카메라대수)/18) as 카메라대수, a.`인구(명)`/(sum(d.카메라대수)/18) as "카메라 1대당 인구수" from `crime`.`광주광역시_자치구별 현황_20210731` as a inner join `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` as b inner join `crime`.`category` as c inner join `crime`.`광주광역시_cctv_20220429` as d on mid(d.소재지지번주소, 7, 1) = mid(c.경찰서, 3, 1) on mid(c.경찰서, 3, 1) = mid(b.관서명, 3, 1) on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) group by 관서명 order by 범죄발생건수 limit 1, 5')
         cur.execute(elisa_sql)
         self.elisa_a = cur.fetchall()
 
