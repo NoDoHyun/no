@@ -16,6 +16,7 @@ class WindowClass(QMainWindow, form_class) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
+        self.elisa_list = []
         self.name=['광주북부경찰서','광주광산경찰서','광주서부경찰서','광주남부경찰서','광주동부경찰서']
         self.name2=['경찰서','발생건수', '검거건수', '검거인원', '구속', '불구속', '기타']
         self.gwangsan.clicked.connect(self.num5)
@@ -69,8 +70,6 @@ class WindowClass(QMainWindow, form_class) :
                'on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) '
                # 관서명으로 묶고 범죄발생건수로 정렬해서 광주<광>역시경찰청을 제외한 구경찰서 5개 출력
                'group by 관서명 order by 범죄발생건수 limit 1, 5')
-        cur.execute(elisa_sql)
-        self.elisa_a = cur.fetchall()
 
     def next(self):
         self.stackedWidget.setCurrentIndex(0)
@@ -85,9 +84,6 @@ class WindowClass(QMainWindow, form_class) :
             self.fill2(word)
         else:
             self.fill()
-
-    # def new_data(self):
-
 
     def fill(self):
         count = 0
