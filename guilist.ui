@@ -23,23 +23,100 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="page_5">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="search">
      <property name="geometry">
       <rect>
-       <x>470</x>
-       <y>80</y>
-       <width>281</width>
-       <height>141</height>
+       <x>100</x>
+       <y>60</y>
+       <width>161</width>
+       <height>61</height>
       </rect>
      </property>
      <property name="text">
-      <string>PushButton</string>
+      <string>검색</string>
      </property>
     </widget>
    </widget>
+   <widget class="QWidget" name="page_2">
+    <widget class="QLineEdit" name="lineEdit1">
+     <property name="geometry">
+      <rect>
+       <x>320</x>
+       <y>70</y>
+       <width>351</width>
+       <height>31</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>100</y>
+       <width>702</width>
+       <height>321</height>
+      </rect>
+     </property>
+     <column>
+      <property name="text">
+       <string>경찰서</string>
+      </property>
+      <property name="toolTip">
+       <string/>
+      </property>
+      <property name="whatsThis">
+       <string/>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>발생건수</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>검거건수</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>검거인원</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>구속</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>불구속</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>기타</string>
+      </property>
+     </column>
+    </widget>
+    <widget class="QPushButton" name="back1">
+     <property name="geometry">
+      <rect>
+       <x>910</x>
+       <y>670</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>돌아가기</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="page"/>
    <widget class="QWidget" name="page_6">
     <widget class="QPushButton" name="gwangsan">
      <property name="geometry">
@@ -104,6 +181,32 @@
      </property>
      <property name="text">
       <string>북구</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="allspace">
+     <property name="geometry">
+      <rect>
+       <x>410</x>
+       <y>130</y>
+       <width>171</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>지역별비교</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="nex">
+     <property name="geometry">
+      <rect>
+       <x>820</x>
+       <y>470</y>
+       <width>161</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>다음페이지</string>
      </property>
     </widget>
    </widget>
