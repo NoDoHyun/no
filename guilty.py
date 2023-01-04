@@ -66,22 +66,23 @@ class WindowClass(QMainWindow, form_class) :
                 'group by 관서명 order by 범죄발생건수 limit 1, 5')
         cur.execute(sql)
         self.a = cur.fetchall()
+
     def next(self):
         self.stackedWidget.setCurrentIndex(0)
+
     def fin(self):
         self.stackedWidget.setCurrentIndex(1)
         self.tableWidget.setRowCount(0)
+
     def back(self):
         self.stackedWidget.setCurrentIndex(3)
+
     def fin2(self):
         word=self.lineEdit1.text()
         if word in self.name:
             self.fill2(word)
         else:
             self.fill()
-
-    # def new_data(self):
-
 
     def fill(self):
         count = 0
@@ -107,7 +108,7 @@ class WindowClass(QMainWindow, form_class) :
         for i in self.a:
             if i[0] == word:
                 for j in range(9):
-                    self.tableWidget.setRowCount(1)
+                    # self.tableWidget.setRowCount(1)
                     self.tableWidget.setItem(0, j, QTableWidgetItem(str(i[j])))
 
     def num1(self):
