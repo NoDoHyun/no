@@ -84,7 +84,7 @@ class CrimeTablePage(QWidget):
 
         # 그래프 데이터 준비
         x = np.arange(4)
-        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '인구당 CCTV 수(1천명/개)'])
+        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', 'CCTV 1대당 인구(천명)'])
         y1 = np.array([self.db_average[1], self.db_average[3], self.db_average[6], self.db_average[8]])
         y2 = np.array([self.graph_list[k][0], self.graph_list[k][2], self.graph_list[k][5], self.graph_list[k][7]])
 
@@ -92,18 +92,20 @@ class CrimeTablePage(QWidget):
         fig, ax1 = plt.subplots()
 
         ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='광주시 평균')
-        ax1.set_ylim(0, 130)
+        ax1.set_ylim(0, 100)
+        ax1.set_xlabel('요소')
+        ax1.set_ylabel('구 전체평균')
 
         ax2 = ax1.twinx()
         ax2.bar(x, y2, color='deeppink', label=self.graph_list[5][k], alpha=0.7, width=0.7)
-        ax2.set_ylim(0, 130)
+        ax2.set_ylim(0, 100)
         ax1.set_zorder(ax2.get_zorder() + 10)
         ax1.patch.set_visible(False)
 
         ax1.legend(loc='upper left')
         ax2.legend(loc='upper right')
 
-        plt.title(f'{self.graph_list[5][k]}지역 범죄 종합 현황')
+        plt.title(f'{self.graph_list[5][k]} 요소별 구 전체평균과 비교')
         plt.xticks(x, data)
 
         plt.show()
@@ -202,6 +204,7 @@ class CrimeTablePage(QWidget):
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
 
+
     # db 호출 함수
     def load_db(self):
         # mysql 로그인 및 db 획득
@@ -224,7 +227,7 @@ class CrimeTablePage(QWidget):
                   # CCTV 갯수
                   'round(sum(c.카메라대수)) as "CCTV 갯수", '
                   # CCTV 갯수 / 인구 * 1,000 = 1,000명당 CCTV 수
-                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "인구당 CCTV 수(1천명/개)" '
+                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "1천명당 CCTV 수" '
                   # 광주광역시 현황 테이블을 a로 받아옴
                   'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
                   # 범죄 종합 테이블을 b로 선언하며 조인
@@ -236,7 +239,7 @@ class CrimeTablePage(QWidget):
                   # 경찰서와 구 명칭 중 같은 단어로 엮음
                   'on mid(a.구분, 7, 1) = mid(b.경찰서, 3, 1) '
                   # 경찰서로 그룹화하여 발생건수 오름차순으로 나열
-                  'group by 경찰서 order by 발생건수')
+                  'group by 경찰서, 구분 order by 발생건수')
         # 불러온 모든 값을 db 변수에 삽입
         self.db = c.fetchall()
         c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
