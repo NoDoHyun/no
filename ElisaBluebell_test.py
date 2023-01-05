@@ -259,6 +259,7 @@ class CrimeTablePage(QWidget):
         # 평균값 생성 함수 호출
         self.set_average()
 
+
     # 평균값 생성 함수
     def set_average(self):
         # load_db 함수에서 불러온 db의 행만큼 반복
