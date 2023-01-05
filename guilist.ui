@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="guilb">
@@ -54,8 +54,8 @@
     <widget class="QTableWidget" name="tableWidget">
      <property name="geometry">
       <rect>
-       <x>140</x>
-       <y>100</y>
+       <x>160</x>
+       <y>110</y>
        <width>702</width>
        <height>321</height>
       </rect>
@@ -113,6 +113,19 @@
      </property>
      <property name="text">
       <string>돌아가기</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="delb">
+     <property name="geometry">
+      <rect>
+       <x>900</x>
+       <y>210</y>
+       <width>91</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>삭제</string>
      </property>
     </widget>
    </widget>
@@ -305,6 +318,32 @@ p, li { white-space: pre-wrap; }
      </property>
      <property name="text">
       <string>초기화</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>840</x>
+       <y>460</y>
+       <width>151</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>840</x>
+       <y>410</y>
+       <width>151</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
      </property>
     </widget>
    </widget>
