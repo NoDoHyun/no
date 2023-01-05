@@ -66,7 +66,6 @@ class CrimeTablePage(QWidget):
 
         # 마지막 리스트에 관서명 넣기
         self.graph_list.insert(6,['동부','남부','서부','광산','북부'])
-        print(self.graph_list)
 
     # 0.동부 1.남부 2.서부 3.광산 4.북부
     def graph(self,k):
