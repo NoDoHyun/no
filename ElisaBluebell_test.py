@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # 프로그램 온오프를 위해 추가
 import sys
@@ -33,6 +32,7 @@ class CrimeTablePage(QWidget):
         self.set_table1()
         self.set_table2()
         self.set_btn()
+        self.set_line()
         self.graph_list = []
         # 버튼 클릭시 각 매서드 이동
         self.dongboo_btn.clicked.connect(self.dongboograph)
@@ -200,13 +200,22 @@ class CrimeTablePage(QWidget):
         self.namboo_btn = QPushButton('남부경찰서\n현황그래프', self)
         self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
         self.go_back_btn = QPushButton('돌아가기', self)
+        self.search_btn = QPushButton('검색', self)
+        self.insert_btn = QPushButton('추가', self)
+        self.delete_btn = QPushButton('삭제', self)
         self.dongboo_btn.setGeometry(130, 700, 78, 43)
         self.seoboo_btn.setGeometry(230, 700, 78, 43)
         self.namboo_btn.setGeometry(330, 700, 78, 43)
         self.bookboo_btn.setGeometry(430, 700, 78, 43)
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
+        self.search_btn.setGeometry(350, 380, 40, 20)
+        self.insert_btn.setGeometry(405, 380, 40, 20)
+        self.delete_btn.setGeometry(460, 380, 40, 20)
 
+    def set_line(self):
+        self.search_line = QLineEdit(self)
+        self.search_line.setGeometry(130, 380, 200, 20)
 
     # db 호출 함수
     def load_db(self):
@@ -251,7 +260,7 @@ class CrimeTablePage(QWidget):
         c.close()
         conn.close()
 
-    # db 설정 함수
+    # DB 설정 함수
     def set_db(self):
         # 각 관할 경찰서 db 설정
         self.dongboo = self.db[0]
@@ -261,6 +270,12 @@ class CrimeTablePage(QWidget):
         self.bookboo = self.db[4]
         # 평균값 생성 함수 호출
         self.set_average()
+
+    # DB 추가 함수
+    # def insert_db(self):
+
+    # DB 삭제 함수
+    # def delete_db(self):
 
     # 평균값 생성 함수
     def set_average(self):
