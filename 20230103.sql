@@ -1,4 +1,4 @@
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+category`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`-- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: crime
 -- ------------------------------------------------------
