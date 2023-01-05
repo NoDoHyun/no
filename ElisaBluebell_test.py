@@ -120,7 +120,7 @@ class CrimeTablePage(QWidget):
         self.crime_table.setGeometry(130, 100, 754, 205)
         self.crime_table.setHorizontalHeaderLabels(['구분', '인구(만명)', '범죄건수', '인구 1만명당 범죄건수',
                                                     '범죄 건수(km²)', '검거건수', '검거율(%)', '카메라 대수',
-                                                    '카메라당 인구수(만명)'])
+                                                    '1천명당 CCTV 수'])
         # 각 열의 크기는 내용과 제목의 출력에 맞춤
         self.crime_table.setColumnWidth(0, 91)
         self.crime_table.setColumnWidth(1, 64)
@@ -186,8 +186,11 @@ class CrimeTablePage(QWidget):
     def set_table2_data(self):
         # 단순 반복 입력
         for i in range(len(self.cctv_db)):
-            for j in range(len(self.cctv_db[0])):
-                self.crime_table.setItem(i, j, QTableWidgetItem(str(self.cctv_db[i][j])))
+            # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
+            self.crime_table.setItem(i, 0, QTableWidgetItem(str(self.cctv_db[i][3])))
+            self.crime_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
+            self.crime_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][2])))
+            self.crime_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][1])))
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -203,7 +206,6 @@ class CrimeTablePage(QWidget):
         self.bookboo_btn.setGeometry(430, 700, 78, 43)
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
-
 
     # db 호출 함수
     def load_db(self):
