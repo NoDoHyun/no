@@ -1,3 +1,5 @@
+
+# -*- coding: utf-8 -*-
 # 프로그램 온오프를 위해 추가
 import sys
 # DB 사용을 위해 세팅
@@ -15,20 +17,23 @@ class CrimeTablePage(QWidget):
     def __init__(self):
         super().__init__()
         # 변수 선언
+        self.db = []
         self.db_average = ['평균', 0, 0, 0, 0, 0, 0, 0, 0]
         self.dongboo = []
         self.seoboo = []
         self.namboo = []
         self.bookboo = []
         self.gwangsan = []
+        self.cctv_db = []
         # 창 설정
         self.setGeometry(0, 0, 1024, 768)
         # db 세팅
         self.load_db()
         self.set_db()
-        self.set_table()
+        self.set_table1()
+        self.set_table2()
         self.set_btn()
-
+        self.graph_list = []
         # 버튼 클릭시 각 매서드 이동
         self.dongboo_btn.clicked.connect(self.dongboograph)
         self.seoboo_btn.clicked.connect(self.seoboograph)
@@ -36,27 +41,25 @@ class CrimeTablePage(QWidget):
         self.namboo_btn.clicked.connect(self.namboograph)
         self.gwangsan_btn.clicked.connect(self.gwangsangraph)
 
-        self.graph_list=[]
-
     def dongboograph(self):
-        self.graph(k=0)
+        self.graph(0)
 
     def namboograph(self):
-        self.graph(k=1)
+        self.graph(1)
 
     def seoboograph(self):
-        self.graph(k=2)
+        self.graph(2)
 
     def gwangsangraph(self):
-        self.graph(k=3)
+        self.graph(3)
 
     def bookboograph(self):
-        self.graph(k=4)
+        self.graph(4)
 
     def graph_ready(self):
         # 그래프에 사용하기 좋게 데이터 리스트화
         self.graph_list.clear()
-        temp=list(self.db)
+        temp = list(self.db)
         for i in temp:
             self.graph_list.append(list(i))
 
@@ -65,11 +68,11 @@ class CrimeTablePage(QWidget):
             del self.graph_list[i][0]
 
         # 마지막 리스트에 관서명 넣기
-        self.graph_list.insert(6,['동부','남부','서부','광산','북부'])
+        self.graph_list.insert(6, ['동부', '남부', '서부', '광산', '북부'])
         print(self.graph_list)
 
     # 0.동부 1.남부 2.서부 3.광산 4.북부
-    def graph(self,k):
+    def graph(self, k):
         self.graph_ready()
         # 그래프 기본 스타일 설정
         plt.style.use('default')
@@ -81,23 +84,21 @@ class CrimeTablePage(QWidget):
 
         # 그래프 데이터 준비
         x = np.arange(4)
-        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '카메라당인구(만명)'])
+        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', 'CCTV 1대당 인구(천명)'])
         y1 = np.array([self.db_average[1], self.db_average[3], self.db_average[6], self.db_average[8]])
         y2 = np.array([self.graph_list[k][0], self.graph_list[k][2], self.graph_list[k][5], self.graph_list[k][7]])
 
         # 그래프 그리기
         fig, ax1 = plt.subplots()
 
-        ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='구 전체평균')
-        ax1.set_ylim(0, 350)
+        ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='광주시 평균')
+        ax1.set_ylim(0, 100)
         ax1.set_xlabel('요소')
         ax1.set_ylabel('구 전체평균')
 
         ax2 = ax1.twinx()
-        ax2.bar(x, y2, color='deeppink', label='요소별 값', alpha=0.7, width=0.7)
-        ax2.set_ylim(0, 350)
-        ax2.set_ylabel(r'요소별 값')
-
+        ax2.bar(x, y2, color='deeppink', label=self.graph_list[5][k], alpha=0.7, width=0.7)
+        ax2.set_ylim(0, 100)
         ax1.set_zorder(ax2.get_zorder() + 10)
         ax1.patch.set_visible(False)
 
@@ -109,14 +110,18 @@ class CrimeTablePage(QWidget):
 
         plt.show()
 
-    # 테이블 위젯 생성
-    def set_table(self):
+    # 종합정보 테이블 위젯 생성
+    def set_table1(self):
         self.crime_table = QTableWidget(self)
+        # 5개구 경찰서와 평균 총 6줄 필요
         self.crime_table.setRowCount(6)
+        # 아래 칼럼 라벨 설정한 9개의 항목 출력 필요
         self.crime_table.setColumnCount(9)
-        self.crime_table.setGeometry(140, 230, 790, 400)
-        self.crime_table.setHorizontalHeaderLabels(['구분', '인구(만명)', '범죄건수', '인구 1만명당 범죄건수', '범죄 건수(km²)',
-                                               '검거건수', '검거율(%)', '카메라 대수', '카메라당 인구수(만명)'])
+        self.crime_table.setGeometry(130, 100, 754, 205)
+        self.crime_table.setHorizontalHeaderLabels(['구분', '인구(만명)', '범죄건수', '인구 1만명당 범죄건수',
+                                                    '범죄 건수(km²)', '검거건수', '검거율(%)', '카메라 대수',
+                                                    '카메라당 인구수(만명)'])
+        # 각 열의 크기는 내용과 제목의 출력에 맞춤
         self.crime_table.setColumnWidth(0, 91)
         self.crime_table.setColumnWidth(1, 64)
         self.crime_table.setColumnWidth(2, 56)
@@ -126,29 +131,78 @@ class CrimeTablePage(QWidget):
         self.crime_table.setColumnWidth(6, 63)
         self.crime_table.setColumnWidth(7, 72)
         self.crime_table.setColumnWidth(8, 128)
+        # 클릭을 통한 수정 불가능
         self.crime_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        # 버티칼 헤더 적용 안함
         self.crime_table.verticalHeader().setVisible(False)
-        self.crime_table.isSortingEnabled()
-        self.set_table_data()
+        # 종합정보표 데이터 세팅 함수 호출
+        self.set_table1_data()
 
-    def set_table_data(self):
+    # 종합정보표
+    def set_table1_data(self):
         for i in range(len(self.db)):
             for j in range(len(self.db[0])):
-                self.crime_table.setItem(i, j, QTableWidgetItem(str(self.db[i][j])))
+                # 현재 값이 문자열이 아닐 때
+                if type(self.db[i][j]) != str:
+                    # 소수점 값을 가지고 있다면
+                    if float(self.db[i][j]) - int(self.db[i][j]) > 0:
+                        # 4개의 숫자만 표에 입력, DB에서 바로 받아와서 튜플값이기 때문에 입력을 별개로 해줌.
+                        self.crime_table.setItem(i, j, QTableWidgetItem(str(f'{self.db[i][j]:.4}')))
+                    # 아니면 그냥 입력
+                    else:
+                        self.crime_table.setItem(i, j, QTableWidgetItem(str(self.db[i][j])))
+                else:
+                    self.crime_table.setItem(i, j, QTableWidgetItem(str(self.db[i][j])))
         for i in range(len(self.db_average)):
-            self.crime_table.setItem(5, i, QTableWidgetItem(str(self.db_average[i])))
+            # 위와는 다른 방법으로 파이썬의 특권을 누려보기 위해 사용해봄, 4열 6열 8열은
+            if i == 4 or i == 6 or i == 8:
+                # 숫자를 4개만 출력
+                self.crime_table.setItem(5, i, QTableWidgetItem(str(f'{self.db_average[i]:.4}')))
+            # 아님 말고
+            else:
+                self.crime_table.setItem(5, i, QTableWidgetItem(str(self.db_average[i])))
 
+    # cctv 정보 확인을 위한 2번째 테이블 작성
+    def set_table2(self):
+        self.crime_table = QTableWidget(self)
+        # cctv_db 튜플의 길이만큼 행 설정
+        self.crime_table.setRowCount(len(self.cctv_db))
+        # CCTV 정보 표시를 위한 4개의 열을 가짐
+        self.crime_table.setColumnCount(4)
+        # 표의 크기는 종합정보표와 같음
+        self.crime_table.setGeometry(130, 405, 754, 205)
+        self.crime_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지번지주소'])
+        # 1열과 2열은 헤더와 내용을 출력하기에 부족함이 없게, 나머지 3, 4열에 분배
+        self.crime_table.setColumnWidth(0, 72)
+        self.crime_table.setColumnWidth(1, 131)
+        self.crime_table.setColumnWidth(2, 266)
+        self.crime_table.setColumnWidth(3, 266)
+        # 버티컬헤더 없음
+        self.crime_table.verticalHeader().setVisible(False)
+        # cctv_db에서 받아온 데이터를 표에 입력해주는 함수 호출
+        self.set_table2_data()
+
+    # 얘가 그 함수임
+    def set_table2_data(self):
+        # 단순 반복 입력
+        for i in range(len(self.cctv_db)):
+            for j in range(len(self.cctv_db[0])):
+                self.crime_table.setItem(i, j, QTableWidgetItem(str(self.cctv_db[i][j])))
+
+    # 버튼 세팅 함수
     def set_btn(self):
-        self.dongboo_btn = QPushButton('동부경찰서', self)
-        self.seoboo_btn = QPushButton('서부경찰서', self)
-        self.bookboo_btn = QPushButton('북부경찰서', self)
-        self.namboo_btn = QPushButton('남부경찰서', self)
-        self.gwangsan_btn = QPushButton('광산경찰서', self)
-        self.dongboo_btn.setGeometry(10, 10, 80, 50)
-        self.seoboo_btn.setGeometry(110, 110, 80, 50)
-        self.namboo_btn.setGeometry(210, 210, 80, 50)
-        self.bookboo_btn.setGeometry(310, 310, 80, 50)
-        self.gwangsan_btn.setGeometry(41, 410, 80, 50)
+        self.dongboo_btn = QPushButton('동부경찰서\n현황그래프', self)
+        self.seoboo_btn = QPushButton('서부경찰서\n현황그래프', self)
+        self.bookboo_btn = QPushButton('북부경찰서\n현황그래프', self)
+        self.namboo_btn = QPushButton('남부경찰서\n현황그래프', self)
+        self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
+        self.go_back_btn = QPushButton('돌아가기', self)
+        self.dongboo_btn.setGeometry(130, 700, 78, 43)
+        self.seoboo_btn.setGeometry(230, 700, 78, 43)
+        self.namboo_btn.setGeometry(330, 700, 78, 43)
+        self.bookboo_btn.setGeometry(430, 700, 78, 43)
+        self.gwangsan_btn.setGeometry(530, 700, 78, 43)
+        self.go_back_btn.setGeometry(804, 700, 78, 43)
 
 
     # db 호출 함수
@@ -162,35 +216,34 @@ class CrimeTablePage(QWidget):
 
         # 커서 지정
         c = conn.cursor()
-        c.execute('select c.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", '
-                  # 범죄 발생 건수
-                  'b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도 as 범죄발생건수, '
-                  # 5대범죄 발생 건수 / (인구 * 10,000) = 인구 1만명당 범죄 발생 건수
-                  'round((b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / a.`인구(명)` * 10000) '
-                  'as "인구 1만명당 범죄 건수", '
-                  # 5대 범죄 발생 건수 / 면적 = 면적당 범죄 발생 건수
-                  '(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", '
-                  # 검거 건수와 검거율(검거 건수 / 범죄 발생 건수)
-                  'c.검거건수, c.검거건수/(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도)*100 as "검거율(%)", '
-                  # CCTV 대수와 인구 / 인구 1만명당 카메라 수를 셀렉
-                  'round(sum(d.카메라대수)/6) as 카메라대수, (sum(d.카메라대수)/6)/a.`인구(명)`*10000 '
-                  'as "1만명당 카메라 수" '
-                  # 자치구별 현황 테이블
+        # 경찰서, 인구, 발생건수
+        c.execute('select b.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", b.발생건수, '
+                  # 발생건수 / 인구 * 10,000 = 인구 10,000명당 범죄율
+                  'round((b.발생건수) / a.`인구(명)` * 10000) as "인구 1만명당 범죄 건수", '
+                  # 발생건수 / km² = 면적대비 범죄율
+                  '(b.발생건수) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", '
+                  # 검거건수, 검거건수 / 발생건수 = 검거율
+                  'b.검거건수, b.검거건수/b.발생건수 * 100 as "검거율(%)", '
+                  # CCTV 갯수
+                  'round(sum(c.카메라대수)) as "CCTV 갯수", '
+                  # CCTV 갯수 / 인구 * 1,000 = 1,000명당 CCTV 수
+                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "1천명당 CCTV 수" '
+                  # 광주광역시 현황 테이블을 a로 받아옴
                   'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
-                  # 자치구별 5대 범죄 현황 테이블 조인
-                  'inner join `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231` as b '
-                  # 카테고리(범죄 현황 요약) 테이블 조인
-                  'inner join `crime`.`category` as c '
-                  # 광주시 CCTV 설치 정보 테이블 조인
-                  'inner join `crime`.`광주광역시_cctv_20220429` as d '
-                  # 광주광역시 <남>구 등 7번째 1글자 = 광주<남>부 등 3번째 1글자일 때, 이하 동일
-                  'on mid(d.소재지지번주소, 7, 1) = mid(c.경찰서, 3, 1) '
-                  'on mid(c.경찰서, 3, 1) = mid(b.관서명, 3, 1) '
-                  'on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) '
-                  # 관서명으로 묶고 범죄발생건수로 나열하여 광주<광>역시경찰청 제외하고 출력
-                  'group by 관서명, 경찰서 order by 범죄발생건수 limit 1, 5')
+                  # 범죄 종합 테이블을 b로 선언하며 조인
+                  'inner join `crime`.`category` as b '
+                  # CCTV 정보를 c로 선언하며 조인
+                  'inner join `crime`.`광주광역시_cctv_20220429` as c '
+                  # 주소와 경찰서명간 같은 단어(동서남북광)로 엮음
+                  'on mid(c.소재지지번주소, 7, 1) = mid(b.경찰서, 3, 1) '
+                  # 경찰서와 구 명칭 중 같은 단어로 엮음
+                  'on mid(a.구분, 7, 1) = mid(b.경찰서, 3, 1) '
+                  # 경찰서로 그룹화하여 발생건수 오름차순으로 나열
+                  'group by 경찰서 order by 발생건수')
         # 불러온 모든 값을 db 변수에 삽입
         self.db = c.fetchall()
+        c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
+        self.cctv_db = c.fetchall()
         # 커서와 커넥션 닫음
         c.close()
         conn.close()
