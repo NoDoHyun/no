@@ -84,7 +84,7 @@ class CrimeTablePage(QWidget):
 
         # 그래프 데이터 준비
         x = np.arange(4)
-        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '인구당 CCTV 수'])
+        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '인구당 CCTV 수(1천명/개)'])
         y1 = np.array([self.db_average[1], self.db_average[3], self.db_average[6], self.db_average[8]])
         y2 = np.array([self.graph_list[k][0], self.graph_list[k][2], self.graph_list[k][5], self.graph_list[k][7]])
 
@@ -224,7 +224,7 @@ class CrimeTablePage(QWidget):
                   # CCTV 갯수
                   'round(sum(c.카메라대수)) as "CCTV 갯수", '
                   # CCTV 갯수 / 인구 * 1,000 = 1,000명당 CCTV 수
-                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "인구당 CCTV 수" '
+                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "인구당 CCTV 수(1천명/개)" '
                   # 광주광역시 현황 테이블을 a로 받아옴
                   'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
                   # 범죄 종합 테이블을 b로 선언하며 조인
