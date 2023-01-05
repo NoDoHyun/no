@@ -144,18 +144,50 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
-#인구(만명), 범죄발생건수, 인구 만명당 범죄건수, 범죄건수/면적(km2), 검거건수, 검거율(%), 카메라대수,카메라 1대당 인구수
+# 그래프 한글깨짐 고치는 방법
+from matplotlib import font_manager, rc
+
+header_list=['인구(만명)', '범죄발생건수', '범죄건수(만명)', '범죄건수(km²)', '검거건수', '검거율(%)', '카메라대수','카메라 1대당 인구수']
 list=[['동구', '남구', '서구','광산구','북구'],[10,21,29,40,43],[1240,1538,2621,2946,3703]
       ,[120,72,90,73,87],[25.3061,25.2131,54.6042,13.2108,30.8583],[1056,1147,2100,2360,2873]
       ,[85.1613,74.5774,80.1221,80.1086,77.5857],[954,1511,1798,2383,2341]
     ,[108.1604,141.7015,162.8053,169.7113,182.8449]]
+donggu_average_list=[[sum(list[1])/5],[sum(list[3])/5],[sum(list[6])/5],[sum(list[8])/5]]
 
-#범죄발생건수/만명
-x = np.arange(5)
-years = [list[0][0],list[0][1],list[0][2],list[0][3],list[0][4]]
-values = [100, 400, 900,1200,2000]
+# 1. 기본 스타일 설정
+plt.style.use('default')
+plt.rcParams['figure.figsize'] = (10, 9)
+plt.rcParams['font.size'] = 10
+font_path = "C:\\Windows\\Fonts\\gulim.ttc"
+font = font_manager.FontProperties(fname=font_path).get_name()
+rc('font', family=font)
 
-plt.bar(x, values)
-plt.xticks(x, years)
+# 2. 데이터 준비
+x = np.arange(4)
+data=(['population(10,000)','number of crimes(10,000)','arrest rate','population(per camera)'])
+y1 = np.array([donggu_average_list[0], donggu_average_list[1], donggu_average_list[2], donggu_average_list[3]])
+y2 = np.array([list[1][0], list[3][0], list[6][0], list[8][0]])
+
+# 3. 그래프 그리기
+fig, ax1 = plt.subplots()
+
+ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='total average')
+ax1.set_ylim(0, 200)
+ax1.set_xlabel('요소')
+ax1.set_ylabel('total average')
+
+ax2 = ax1.twinx()
+ax2.bar(x, y2, color='deeppink', label='야옹', alpha=0.7, width=0.7)
+ax2.set_ylim(0, 200)
+ax2.set_ylabel(r'element_value')
+
+ax1.set_zorder(ax2.get_zorder() + 10)
+ax1.patch.set_visible(False)
+
+ax1.legend(loc='upper left')
+ax2.legend(loc='upper right')
+
+plt.title('동구 그래프')
+plt.xticks(x, data)
 
 plt.show()

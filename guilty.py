@@ -92,7 +92,7 @@ class WindowClass(QMainWindow, form_class) :
         self.tableWidget.setRowCount(0)
         for i in self.a:
             if i[0] == word:
-                for j in range(7):
+                for j in range(9):
                     self.tableWidget.setRowCount(1)
                     self.tableWidget.setItem(0, j, QTableWidgetItem(str(i[j])))
 
