@@ -29,6 +29,86 @@ class CrimeTablePage(QWidget):
         self.set_table()
         self.set_btn()
 
+        # 버튼 클릭시 각 매서드 이동
+        self.dongboo_btn.clicked.connect(self.dongboograph)
+        self.seoboo_btn.clicked.connect(self.seoboograph)
+        self.bookboo_btn.clicked.connect(self.bookboograph)
+        self.namboo_btn.clicked.connect(self.namboograph)
+        self.gwangsan_btn.clicked.connect(self.gwangsangraph)
+
+        self.graph_list=[]
+
+    def dongboograph(self):
+        self.graph(k=0)
+
+    def namboograph(self):
+        self.graph(k=1)
+
+    def seoboograph(self):
+        self.graph(k=2)
+
+    def gwangsangraph(self):
+        self.graph(k=3)
+
+    def bookboograph(self):
+        self.graph(k=4)
+
+    def graph_ready(self):
+        # 그래프에 사용하기 좋게 데이터 리스트화
+        self.graph_list.clear()
+        temp=list(self.db)
+        for i in temp:
+            self.graph_list.append(list(i))
+
+        # 관서명 삭제 : 각 리스트 [0] 삭제
+        for i in range(len(self.graph_list)):
+            del self.graph_list[i][0]
+
+        # 마지막 리스트에 관서명 넣기
+        self.graph_list.insert(6,['동부','남부','서부','광산','북부'])
+        print(self.graph_list)
+
+    # 0.동부 1.남부 2.서부 3.광산 4.북부
+    def graph(self,k):
+        self.graph_ready()
+        # 그래프 기본 스타일 설정
+        plt.style.use('default')
+        plt.rcParams['figure.figsize'] = (10, 9)
+        plt.rcParams['font.size'] = 10
+        font_path = "C:\\Windows\\Fonts\\gulim.ttc"
+        font = font_manager.FontProperties(fname=font_path).get_name()
+        rc('font', family=font)
+
+        # 그래프 데이터 준비
+        x = np.arange(4)
+        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '카메라당인구(만명)'])
+        y1 = np.array([self.db_average[1], self.db_average[3], self.db_average[6], self.db_average[8]])
+        y2 = np.array([self.graph_list[k][0], self.graph_list[k][2], self.graph_list[k][5], self.graph_list[k][7]])
+
+        # 그래프 그리기
+        fig, ax1 = plt.subplots()
+
+        ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='구 전체평균')
+        ax1.set_ylim(0, 350)
+        ax1.set_xlabel('요소')
+        ax1.set_ylabel('구 전체평균')
+
+        ax2 = ax1.twinx()
+        ax2.bar(x, y2, color='deeppink', label='요소별 값', alpha=0.7, width=0.7)
+        ax2.set_ylim(0, 350)
+        ax2.set_ylabel(r'요소별 값')
+
+        ax1.set_zorder(ax2.get_zorder() + 10)
+        ax1.patch.set_visible(False)
+
+        ax1.legend(loc='upper left')
+        ax2.legend(loc='upper right')
+
+        plt.title(f'{self.graph_list[5][k]} 요소별 구 전체평균과 비교')
+        plt.xticks(x, data)
+
+        plt.show()
+
     # 테이블 위젯 생성
     def set_table(self):
         self.crime_table = QTableWidget(self)
@@ -91,9 +171,9 @@ class CrimeTablePage(QWidget):
                   # 5대 범죄 발생 건수 / 면적 = 면적당 범죄 발생 건수
                   '(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", '
                   # 검거 건수와 검거율(검거 건수 / 범죄 발생 건수)
-                  'c.검거건수, c.검거건수/(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도) * 100 as "검거율(%)", '
+                  'c.검거건수, c.검거건수/(b.폭력 + b.살인 + b.`강간-강제추행` + b.강도 + b.절도)*100 as "검거율(%)", '
                   # CCTV 대수와 인구 / 인구 1만명당 카메라 수를 셀렉
-                  'round(sum(d.카메라대수)/18) as 카메라대수, (sum(d.카메라대수)/18)/a.`인구(명)`*10000 '
+                  'round(sum(d.카메라대수)/6) as 카메라대수, (sum(d.카메라대수)/6)/a.`인구(명)`*10000 '
                   'as "1만명당 카메라 수" '
                   # 자치구별 현황 테이블
                   'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
@@ -108,7 +188,7 @@ class CrimeTablePage(QWidget):
                   'on mid(c.경찰서, 3, 1) = mid(b.관서명, 3, 1) '
                   'on mid(a.구분, 7, 1) = mid(b.관서명, 3, 1) '
                   # 관서명으로 묶고 범죄발생건수로 나열하여 광주<광>역시경찰청 제외하고 출력
-                  'group by 관서명 order by 범죄발생건수 limit 1, 5')
+                  'group by 관서명, 경찰서 order by 범죄발생건수 limit 1, 5')
         # 불러온 모든 값을 db 변수에 삽입
         self.db = c.fetchall()
         # 커서와 커넥션 닫음
