@@ -18,7 +18,7 @@ rc('font', family=font)
 form_class = uic.loadUiType("guilist.ui")[0]
 
 #화면을 띄우는데 사용되는 Class 선언
-class WindowClass(QMainWindow, form_class) :
+class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
     def __init__(self) :
         super().__init__()
         self.setupUi(self)
@@ -34,20 +34,23 @@ class WindowClass(QMainWindow, form_class) :
         self.allspace3.clicked.connect(self.path1)
         self.cl.clicked.connect(self.path4)
         self.nex.clicked.connect(self.fin)
+        self.tableWidget.cellChanged.connect(self.rev)
         self.lineEdit1.returnPressed.connect(self.fin2)
         self.back1.clicked.connect(self.back)
         self.guilb.clicked.connect(self.back2)
         self.back_2.clicked.connect(self.back)
-
-        self.con()
-    def con(self):
-        con = pymysql.connect(host='localhost', user='root', password='1234',
+        self.delb.clicked.connect(self.del1)
+        self.statusbar = self.statusBar()
+        self.gra2=[]
+        self.con1()
+    def con1(self):
+        self.con = pymysql.connect(host='localhost', user='root', password='1234',
                               db='crime', charset='utf8')  # 한글처리 (charset = 'utf8')
-        cur = con.cursor()
+        self.cur = self.con.cursor()
         # sql = "Select * from `crime`.`경찰청 광주광역시경찰청_자치구별 5대 범죄 현황_20211231`"#case1
         sql = "Select * from `crime`.`category`"  # case2
-        cur.execute(sql)
-        self.a = cur.fetchall()
+        self.cur.execute(sql)
+        self.a = self.cur.fetchall()
     def fin(self):
         self.stackedWidget.setCurrentIndex(1)
         self.tableWidget.setRowCount(0)
@@ -92,9 +95,31 @@ class WindowClass(QMainWindow, form_class) :
         self.tableWidget.setRowCount(0)
         for i in self.a:
             if i[0] == word:
-                for j in range(9):
+                for j in range(7):
                     self.tableWidget.setRowCount(1)
                     self.tableWidget.setItem(0, j, QTableWidgetItem(str(i[j])))
+    def rev(self):
+        count1=0
+        row=self.tableWidget.currentRow()
+        col=self.tableWidget.currentColumn()
+        item=self.tableWidget.currentItem().text()
+        sql = "Select * from `crime`.`category`"
+        self.cur.execute(sql)
+        self.a = self.cur.fetchall()
+        for i in self.a:
+            if row==count1:
+                cols=(i[0])
+                # self.cur.execute(f"UPDATE `crime`.`category` SET 기타= 369 where 경찰서='광주동부경찰서'")
+                self.cur.execute(f"UPDATE `crime`.`category` SET {self.name2[col]}={item} where 경찰서='{cols}'")
+                self.con.commit()
+                print(i[6],self.name2[col])
+                # break
+            count1+=1
+    def del1(self):
+        row=self.tableWidget.currentRow()
+        col=self.tableWidget.currentColumn()
+        print(row,col)
+        self.tableWidget.takeItem(row, col)
 
     def num1(self):
         self.g(0)
@@ -113,21 +138,43 @@ class WindowClass(QMainWindow, form_class) :
             gra.append(i)
         plt.bar(['발생건수', '검거건수', '검거인원', '구속', '불구속', '기타'], [gra[1], gra[2], gra[3], gra[4], gra[5], gra[6]])
         plt.show()
+
+    def mouseMoveEvent(self, e):
+        txt = "Mouse 위치 ; x={0},y={1}, global={2},{3}".format(e.x(), e.y(), e.globalX(), e.globalY())
+        self.statusbar.showMessage(txt)
+        if e.x()>=449 and e.x()<=484 and e.y()>=228 and e.y()<=621:
+            self.label_2.setText(str(self.gra2[3]))
+            self.label_3.setText('광주북구')
+        elif e.x()>=517 and e.x()<=549 and e.y()>=309 and e.y()<=621:
+            self.label_2.setText(str(self.gra2[4]))
+            self.label_3.setText('광주광산구')
+        elif e.x()>=582 and e.x()<=617 and e.y()>=344 and e.y()<=621:
+            self.label_2.setText(str(self.gra2[1]))
+            self.label_3.setText('광주서구')
+        elif e.x()>=649 and e.x()<=684 and e.y()>=458 and e.y()<=621:
+            self.label_2.setText(str(self.gra2[2]))
+            self.label_3.setText('광주남구')
+        elif e.x()>=716 and e.x()<=751 and e.y()>=490 and e.y()<=621:
+            self.label_2.setText(str(self.gra2[0]))
+            self.label_3.setText('광주동구')
+        else:
+            self.label_2.clear()
+            self.label_3.clear()
     def all(self,num):
         n=[0,1,2,3,4]
-        gra2=[]
         xlab = ['광주북구','광주광산구','광주서구','광주남구','광주동구']
         xval = list(range(1, len(xlab) + 1))
-
+        self.gra2=[]
+        gra2=self.gra2
         ticks = []
         for i, item in enumerate(xlab):
             ticks.append((xval[i], item))
         ticks = [ticks]
         for h in n:
             i=self.a[h]
-            gra2.append(i[1])
+            self.gra2.append(i[1])
         plus = (gra2[0] + gra2[1] + gra2[2] + gra2[3] + gra2[4]) / 5
-        bargraph=pg.BarGraphItem(x=xval,height=[gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]],width=0.5)
+        bargraph=pg.BarGraphItem(x=xval,height=[gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]],width=0.1)
         ax = self.widget.getAxis('bottom')
         ax.setTicks(ticks)
         if num==4:
