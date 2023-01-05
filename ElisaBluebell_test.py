@@ -27,6 +27,7 @@ class CrimeTablePage(QWidget):
         self.load_db()
         self.set_db()
         self.set_table()
+        self.set_btn()
 
     # 테이블 위젯 생성
     def set_table(self):
@@ -56,6 +57,18 @@ class CrimeTablePage(QWidget):
                 self.crime_table.setItem(i, j, QTableWidgetItem(str(self.db[i][j])))
         for i in range(len(self.db_average)):
             self.crime_table.setItem(5, i, QTableWidgetItem(str(self.db_average[i])))
+
+    def set_btn(self):
+        self.dongboo_btn = QPushButton('동부경찰서', self)
+        self.seoboo_btn = QPushButton('서부경찰서', self)
+        self.bookboo_btn = QPushButton('북부경찰서', self)
+        self.namboo_btn = QPushButton('남부경찰서', self)
+        self.gwangsan_btn = QPushButton('광산경찰서', self)
+        self.dongboo_btn.setGeometry(10, 10, 80, 50)
+        self.seoboo_btn.setGeometry(110, 110, 80, 50)
+        self.namboo_btn.setGeometry(210, 210, 80, 50)
+        self.bookboo_btn.setGeometry(310, 310, 80, 50)
+        self.gwangsan_btn.setGeometry(41, 410, 80, 50)
 
 
     # db 호출 함수
