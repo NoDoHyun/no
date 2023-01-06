@@ -403,16 +403,20 @@ class CrimeTablePage(QWidget):
             self.db_average[i] /= len(self.db)
 
 
+# 데이터 추가용 다이얼로그
 class InsertDialog(QWidget):
 
     def __init__(self):
         super().__init__()
+        # 창 크기 설정
         self.setGeometry(300, 150, 200, 250)
+        # ui 세팅
         self.set_label()
         self.set_btn()
         self.set_line()
         self.set_combo()
 
+    # 라벨 세팅
     def set_label(self):
         # 라벨 텍스트 중앙 정렬을 위한 Qt 로컬 호출
         from PyQt5.QtCore import Qt
@@ -424,23 +428,28 @@ class InsertDialog(QWidget):
         self.street_label.setGeometry(0, 50, 200, 20)
         self.legacy_label.setGeometry(0, 100, 200, 20)
         self.cctv_label.setGeometry(0, 150, 200, 20)
+        # 라벨 텍스트 가운데 정렬
         self.title_label.setAlignment(Qt.AlignCenter)
         self.street_label.setAlignment(Qt.AlignCenter)
         self.legacy_label.setAlignment(Qt.AlignCenter)
         self.cctv_label.setAlignment(Qt.AlignCenter)
 
+    # 콤보박스 세팅
     def set_combo(self):
         self.cctv_combo = QComboBox(self)
         self.cctv_combo.setGeometry(70, 170, 60, 20)
+        # 콤보박스에 표시될 숫자와 데이터 삽입
         for i in range(1, 10):
             self.cctv_combo.addItem(str(i), i)
 
+    # 라인에딧 세팅
     def set_line(self):
         self.street_adress = QLineEdit(self)
         self.legacy_adress = QLineEdit(self)
         self.street_adress.setGeometry(20, 70, 160, 20)
         self.legacy_adress.setGeometry(20, 120, 160, 20)
 
+    # 버튼 세팅
     def set_btn(self):
         self.go_back_btn = QPushButton('닫기', self)
         self.insert_btn = QPushButton('추가', self)
@@ -449,20 +458,32 @@ class InsertDialog(QWidget):
         self.go_back_btn.clicked.connect(self.close_dialog)
         self.insert_btn.clicked.connect(self.insert_data)
 
+    # 닫기 버튼 클릭시 다이얼로그 닫힘
     def close_dialog(self):
         self.close()
 
+    # 추가 버튼 클릭시 데이터 추가함
     def insert_data(self):
+        # 데이터 추가를 위한 로컬 import
         import pymysql
+        # DB 커넥트
         conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='1234', db='crime')
         # 커서 지정
         c = conn.cursor()
+        # 지번주소가 비어있을 경우
         if not self.legacy_adress.text():
+            # 경고창 출력
             warn = QMessageBox.warning(self, '주소 입력', '지번 주소를 입력해주세요.')
+        # 지번주소가 입력된 경우
         else:
+            # 입력된 데이터를 DB에 입력
             c.execute(f'''insert into `crime`.`광주광역시_cctv_20220429` (관리기관명, 소재지도로명주소, 소재지지번주소,
              카메라대수) values ("광주광역시 사회재난과", "{self.street_adress.text()}", "{self.legacy_adress.text()}"
              , {self.cctv_combo.currentData()})''')
+            # 커밋
             conn.commit()
+            # 중복 입력 방지를 위한 알림창 출력
             complete = QMessageBox.information(self, '추가 성공', 'CCTV 정보가 등록되었습니다.')
-
+        # 커서와 커넥션 닫음
+        c.close()
+        conn.close()
