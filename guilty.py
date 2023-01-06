@@ -139,7 +139,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.tableWidget.setRowCount(0)
 
     def back(self,n):
-        print(self.stackedWidget.setCurrentIndex(n))
+        self.stackedWidget.setCurrentIndex(n)
 
     def path1(self,n):
         self.all(n)
