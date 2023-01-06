@@ -395,10 +395,3 @@ class CrimeTablePage(QWidget):
         for i in range(1, len(self.db_average)):
             # 각 열을 받아온 db의 행의 갯수로 나누어 평균을 구함
             self.db_average[i] /= len(self.db)
-
-
-# if __name__ == "__main__":
-#     app = QApplication(sys.argv)
-#     ex = CrimeTablePage()
-#     ex.show()
-#     app.exec_()
