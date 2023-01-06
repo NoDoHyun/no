@@ -4,8 +4,10 @@ from matplotlib import font_manager, rc
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-
+from PyQt5.QtGui import *
+import urllib.request
 from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import Qt
 
 import pyqtgraph as pg
 import sys
@@ -44,6 +46,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.statusbar = self.statusBar()
         self.gra2=[]
         self.con1()
+        self.img()
 
         # 그래프 관련 버튼 클릭시 해당 메서드로 연결
         self.generation_btn.clicked.connect(self.generation_graph)
@@ -282,7 +285,17 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.widget.plot([1, 2, 3, 4, 5], [gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]], pen='b',symbol='o')
         if num==3:
             self.widget.plot([0,1,2,3,4,5,6],[plus,plus,plus,plus,plus,plus,plus], pen='r',fillLevel=0,fillBrush=(255,255,255,70))
-        # plt.show()
+
+    def img(self):
+        urlString = 'https://images.chosun.com/resizer/NP8DFExtYcd9QKP1fJrf9YBDC2c=/1200x630/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UUXIQJGYI5BN7E6DWOERW5YNAY.JPG'
+        imageFromWeb = urllib.request.urlopen(urlString).read()
+        qPixmapVar = QPixmap()
+        qPixmapVar.loadFromData(imageFromWeb)
+        self.backimg.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.backimg2.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.backimg3.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.label_2.setStyleSheet("background-color: white")
+        self.label_3.setStyleSheet("background-color: white")
 
 if __name__ == "__main__" :
 

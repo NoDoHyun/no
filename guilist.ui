@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="guilb">
@@ -39,6 +39,49 @@
       <string>범죄율 보기</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="guilb2">
+     <property name="geometry">
+      <rect>
+       <x>430</x>
+       <y>160</y>
+       <width>131</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>i</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="guilb3">
+     <property name="geometry">
+      <rect>
+       <x>720</x>
+       <y>160</y>
+       <width>131</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>b</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="backimg">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1024</width>
+       <height>768</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <zorder>backimg</zorder>
+    <zorder>guilb</zorder>
+    <zorder>guilb2</zorder>
+    <zorder>guilb3</zorder>
    </widget>
    <widget class="QWidget" name="page_2">
     <widget class="QLineEdit" name="lineEdit1">
@@ -138,17 +181,17 @@
       </rect>
      </property>
     </widget>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="backimg2">
      <property name="geometry">
       <rect>
-       <x>300</x>
-       <y>490</y>
-       <width>391</width>
-       <height>31</height>
+       <x>0</x>
+       <y>0</y>
+       <width>1024</width>
+       <height>768</height>
       </rect>
      </property>
      <property name="text">
-      <string>경찰서(str),발생건수,검거건수,검거인원,구속,불구속,기타 순으로 입력</string>
+      <string>TextLabel</string>
      </property>
     </widget>
     <widget class="QPushButton" name="generation_btn">
@@ -177,6 +220,30 @@
       <string>관할별 범죄 검거/미검거건수(%)</string>
      </property>
     </widget>
+    <widget class="QTextBrowser" name="textBrowser_2">
+     <property name="geometry">
+      <rect>
+       <x>290</x>
+       <y>500</y>
+       <width>411</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="html">
+      <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Gulim'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;   경찰서(str),발생건수,검거건수,검거인원,구속,불구속,기타 순으로 입력&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <zorder>backimg2</zorder>
+    <zorder>lineEdit1</zorder>
+    <zorder>tableWidget</zorder>
+    <zorder>back1</zorder>
+    <zorder>delb</zorder>
+    <zorder>lineEdit2</zorder>
+    <zorder>textBrowser_2</zorder>
    </widget>
    <widget class="QWidget" name="page"/>
    <widget class="QWidget" name="page_6">
@@ -289,7 +356,7 @@
       <rect>
        <x>350</x>
        <y>670</y>
-       <width>471</width>
+       <width>461</width>
        <height>91</height>
       </rect>
      </property>
@@ -305,15 +372,18 @@ p, li { white-space: pre-wrap; }
     <widget class="QLabel" name="label">
      <property name="geometry">
       <rect>
-       <x>310</x>
-       <y>90</y>
-       <width>421</width>
+       <x>250</x>
+       <y>40</y>
+       <width>511</width>
        <height>101</height>
       </rect>
      </property>
      <property name="font">
       <font>
-       <pointsize>20</pointsize>
+       <family>Arial Black</family>
+       <pointsize>25</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
       </font>
      </property>
      <property name="text">
@@ -378,8 +448,19 @@ p, li { white-space: pre-wrap; }
        <height>61</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Arial Black</family>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
       <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <widget class="QLabel" name="label_3">
@@ -391,10 +472,51 @@ p, li { white-space: pre-wrap; }
        <height>61</height>
       </rect>
      </property>
+     <property name="font">
+      <font>
+       <family>Arial Black</family>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
      <property name="text">
       <string/>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
     </widget>
+    <widget class="QLabel" name="backimg3">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>1024</width>
+       <height>768</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>TextLabel</string>
+     </property>
+    </widget>
+    <zorder>backimg3</zorder>
+    <zorder>gwangsan</zorder>
+    <zorder>east</zorder>
+    <zorder>west</zorder>
+    <zorder>south</zorder>
+    <zorder>north</zorder>
+    <zorder>allspace</zorder>
+    <zorder>nex</zorder>
+    <zorder>back_2</zorder>
+    <zorder>textBrowser</zorder>
+    <zorder>label</zorder>
+    <zorder>widget</zorder>
+    <zorder>allspace2</zorder>
+    <zorder>allspace3</zorder>
+    <zorder>cl</zorder>
+    <zorder>label_2</zorder>
+    <zorder>label_3</zorder>
    </widget>
   </widget>
  </widget>
