@@ -301,7 +301,8 @@ class WindowClass(QMainWindow, form_class, QtWidgets.QWidget):
         widget.setCurrentIndex(1)
 
     def img(self):
-        url_string = 'https://images.chosun.com/resizer/NP8DFExtYcd9QKP1fJrf9YBDC2c=/1200x630/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UUXIQJGYI5BN7E6DWOERW5YNAY.JPG'
+        url_string = 'https://images.chosun.com/resizer/NP8DFExtYcd9QKP1fJrf9YBDC2c=/1200x630/smart/' \
+                     'cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UUXIQJGYI5BN7E6DWOERW5YNAY.JPG'
         image_from_web = urllib.request.urlopen(url_string).read()
         q_pixmap_var = QPixmap()
         q_pixmap_var.loadFromData(image_from_web)
