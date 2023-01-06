@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="guilb">
@@ -190,6 +190,9 @@
        <height>768</height>
       </rect>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -238,6 +241,8 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
     <zorder>backimg2</zorder>
+    <zorder>generation_btn</zorder>
+    <zorder>arrest_unarrest_btn</zorder>
     <zorder>lineEdit1</zorder>
     <zorder>tableWidget</zorder>
     <zorder>back1</zorder>
