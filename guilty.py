@@ -36,6 +36,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.nex.clicked.connect(self.fin)
         self.tableWidget.cellChanged.connect(self.rev)
         self.lineEdit1.returnPressed.connect(self.fin2)
+        self.lineEdit2.returnPressed.connect(self.ins)
         self.back1.clicked.connect(self.back)
         self.guilb.clicked.connect(self.back2)
         self.back_2.clicked.connect(self.back)
@@ -43,6 +44,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.statusbar = self.statusBar()
         self.gra2=[]
         self.con1()
+
     def con1(self):
         self.con = pymysql.connect(host='localhost', user='root', password='1234',
                               db='crime', charset='utf8')  # 한글처리 (charset = 'utf8')
@@ -51,9 +53,11 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         sql = "Select * from `crime`.`category`"  # case2
         self.cur.execute(sql)
         self.a = self.cur.fetchall()
+
     def fin(self):
         self.stackedWidget.setCurrentIndex(1)
         self.tableWidget.setRowCount(0)
+
     def back(self):
         self.stackedWidget.setCurrentIndex(0)
     def back2(self):
@@ -66,12 +70,14 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.all(3)
     def path4(self):
         self.all(4)
+
     def fin2(self):
         word=self.lineEdit1.text()
         if word in self.name:
             self.fill2(word)
         else:
             self.fill()
+
     def fill(self):
         count = 0
         count3 = 1
@@ -98,6 +104,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
                 for j in range(7):
                     self.tableWidget.setRowCount(1)
                     self.tableWidget.setItem(0, j, QTableWidgetItem(str(i[j])))
+
     def rev(self):
         count1=0
         row=self.tableWidget.currentRow()
@@ -115,11 +122,21 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
                 print(i[6],self.name2[col])
                 # break
             count1+=1
+
+    def ins(self):
+        word = self.lineEdit2.text()
+        words = word.split(',')
+        self.cur.execute(f"insert into `crime`.`category` values('{words[0]}',{words[1]},{words[2]},{words[3]},{words[4]},{words[5]},{words[6]})")
+        self.con.commit()
+        self.lineEdit2.clear()
+
     def del1(self):
         row=self.tableWidget.currentRow()
         col=self.tableWidget.currentColumn()
-        print(row,col)
-        self.tableWidget.takeItem(row, col)
+        item=self.tableWidget.item(row, col).text()
+        print(item)
+        self.cur.execute(f"DELETE FROM `crime`.`category` WHERE 경찰서='{item}'")
+        self.con.commit()
 
     def num1(self):
         self.g(0)
@@ -160,6 +177,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         else:
             self.label_2.clear()
             self.label_3.clear()
+
     def all(self,num):
         n=[0,1,2,3,4]
         xlab = ['광주북구','광주광산구','광주서구','광주남구','광주동구']
@@ -193,26 +211,3 @@ if __name__ == "__main__" :
     myWindow = WindowClass()
     myWindow.show()
     app.exec_()
-
-# CASE 1
-# name=['광주광산경찰서','광주동부경찰서','광주서부경찰서','광주남부경찰서','광주북부경찰서']
-# b=[]
-# namenum=[]
-#
-# for i in a:
-#     b.append(list(i))
-# for k in name:
-#     for j in b:
-#         if j[0] in k:
-#             if j[1] in '발  생  건  수':
-#                 c = 0
-#                 print(j)
-#                 c+=j[2]+j[3]+j[4]+j[5]+j[6]
-#                 namenum+=[[k,c]]
-#                 break
-# print(namenum)
-
-
-
-# CASE2
-
