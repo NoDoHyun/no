@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# 프로그램 온오프를 위해 추가
-import sys
 # DB 사용을 위해 세팅
 import pymysql
 # 그래프를 그리기 위해 세팅
