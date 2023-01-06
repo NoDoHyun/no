@@ -637,6 +637,46 @@ p, li { white-space: pre-wrap; }
       <string>TextLabel</string>
      </property>
     </widget>
+    <widget class="QComboBox" name="comboBox">
+     <property name="geometry">
+      <rect>
+       <x>480</x>
+       <y>170</y>
+       <width>76</width>
+       <height>22</height>
+      </rect>
+     </property>
+     <item>
+      <property name="text">
+       <string>발생인원</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>검거건수</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>검거인원</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>구속</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>불구속</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>기타</string>
+      </property>
+     </item>
+    </widget>
     <zorder>backimg3</zorder>
     <zorder>gwangsan</zorder>
     <zorder>east</zorder>
@@ -653,6 +693,7 @@ p, li { white-space: pre-wrap; }
     <zorder>cl</zorder>
     <zorder>label_2</zorder>
     <zorder>label_3</zorder>
+    <zorder>comboBox</zorder>
    </widget>
   </widget>
  </widget>

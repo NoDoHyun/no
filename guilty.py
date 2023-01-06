@@ -43,6 +43,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.guilb3.clicked.connect(self.another_path)
         self.back_2.clicked.connect(lambda: self.back(0))
         self.delb.clicked.connect(self.del1)
+        # self.comboBox.currentTextChanged.connect(self.combo_select)
         self.statusbar = self.statusBar()
         self.gra2=[]
         self.con1()
@@ -141,7 +142,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.tableWidget.setRowCount(0)
 
     def back(self,n):
-        self.stackedWidget.setCurrentIndex(n)
+        print(self.stackedWidget.setCurrentIndex(n))
 
     def path1(self,n):
         self.all(n)
@@ -152,6 +153,16 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.fill2(word)
         else:
             self.fill()
+    def combo_select(self):
+        count=0
+        num=1
+        name=self.comboBox.currentText()
+        for i in self.name2:
+            if i == name:
+                num=count
+            count+=1
+        return num
+
 
     def fill(self):
         self.con1()
@@ -259,12 +270,15 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.gra2=[]
         gra2=self.gra2
         ticks = []
+        num2=self.combo_select()
+        print(num2)
+
         for i, item in enumerate(xlab):
             ticks.append((xval[i], item))
         ticks = [ticks]
         for h in n:
             i=self.a[h]
-            self.gra2.append(i[1])
+            self.gra2.append(i[num2])
         plus = (gra2[0] + gra2[1] + gra2[2] + gra2[3] + gra2[4]) / 5
         bargraph=pg.BarGraphItem(x=xval,height=[gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]],width=0.1)
         ax = self.widget.getAxis('bottom')
