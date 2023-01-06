@@ -117,7 +117,6 @@ class CrimeTablePage(QWidget):
         self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
         self.go_back_btn = QPushButton('돌아가기', self)
         self.search_btn = QPushButton('검색', self)
-        self.insert_btn = QPushButton('추가', self)
         self.delete_btn = QPushButton('삭제', self)
         self.save_btn = QPushButton('저장', self)
         self.dongboo_btn.setGeometry(130, 700, 78, 43)
