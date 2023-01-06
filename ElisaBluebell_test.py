@@ -109,7 +109,7 @@ class CrimeTablePage(QWidget):
         ax1.legend(loc='upper left')
         ax2.legend(loc='upper right')
 
-        plt.title(f'{self.graph_list[5][k]} 요소별 구 전체평균과 비교')
+        plt.title(f'{self.graph_list[5][k]} 경찰서 현황')
         plt.xticks(x, data)
 
         plt.show()
