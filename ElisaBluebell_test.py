@@ -110,7 +110,7 @@ class CrimeTablePage(QWidget):
         ax1.legend(loc='upper left')
         ax2.legend(loc='upper right')
 
-        plt.title(f'{self.graph_list[5][k]} 경찰서 현황')
+        plt.title(f'{self.graph_list[5][k]} 요소별 구 전체평균과 비교')
         plt.xticks(x, data)
 
         plt.show()
@@ -251,6 +251,7 @@ class CrimeTablePage(QWidget):
             self.cctv_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
             self.cctv_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
             self.cctv_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
+        self.cctv_db = search_result
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -346,10 +347,8 @@ class CrimeTablePage(QWidget):
         self.set_average()
 
     # DB 추가 함수
-    # def insert_db(self):
-
-    # DB 삭제 함수
-    # def delete_db(self):
+    def table2_insert_item(self):
+        pass
 
     # 평균값 생성 함수
     def set_average(self):
