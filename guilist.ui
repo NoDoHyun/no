@@ -151,6 +151,32 @@
       <string>경찰서(str),발생건수,검거건수,검거인원,구속,불구속,기타 순으로 입력</string>
      </property>
     </widget>
+    <widget class="QPushButton" name="generation_btn">
+     <property name="geometry">
+      <rect>
+       <x>280</x>
+       <y>610</y>
+       <width>171</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>관할별 범죄발생건수(%)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="arrest_unarrest_btn">
+     <property name="geometry">
+      <rect>
+       <x>550</x>
+       <y>610</y>
+       <width>201</width>
+       <height>51</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>관할별 범죄 검거/미검거건수(%)</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="page"/>
    <widget class="QWidget" name="page_6">
