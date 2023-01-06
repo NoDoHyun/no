@@ -662,7 +662,7 @@ p, li { white-space: pre-wrap; }
      </property>
      <item>
       <property name="text">
-       <string>발생인원</string>
+       <string>발생건수</string>
       </property>
      </item>
      <item>
