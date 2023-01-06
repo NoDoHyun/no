@@ -1,4 +1,3 @@
-
 # -*- coding: utf-8 -*-
 # 프로그램 온오프를 위해 추가
 import sys
@@ -33,6 +32,7 @@ class CrimeTablePage(QWidget):
         self.set_table1()
         self.set_table2()
         self.set_btn()
+        self.set_line()
         self.graph_list = []
         # 버튼 클릭시 각 매서드 이동
         self.dongboo_btn.clicked.connect(self.dongboograph)
@@ -84,7 +84,7 @@ class CrimeTablePage(QWidget):
 
         # 그래프 데이터 준비
         x = np.arange(4)
-        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', 'CCTV 1대당 인구(천명)'])
+        data = (['인구(만명)', '범죄건수(만명)', '검거율(%)', '인구당 CCTV 수(1,000명/개)'])
         y1 = np.array([self.db_average[1], self.db_average[3], self.db_average[6], self.db_average[8]])
         y2 = np.array([self.graph_list[k][0], self.graph_list[k][2], self.graph_list[k][5], self.graph_list[k][7]])
 
@@ -92,13 +92,13 @@ class CrimeTablePage(QWidget):
         fig, ax1 = plt.subplots()
 
         ax1.plot(x, y1, color='green', markersize=7, linewidth=5, alpha=0.7, label='광주시 평균')
-        ax1.set_ylim(0, 100)
+        ax1.set_ylim(0, 130)
         ax1.set_xlabel('요소')
         ax1.set_ylabel('구 전체평균')
 
         ax2 = ax1.twinx()
         ax2.bar(x, y2, color='deeppink', label=self.graph_list[5][k], alpha=0.7, width=0.7)
-        ax2.set_ylim(0, 100)
+        ax2.set_ylim(0, 130)
         ax1.set_zorder(ax2.get_zorder() + 10)
         ax1.patch.set_visible(False)
 
@@ -120,7 +120,7 @@ class CrimeTablePage(QWidget):
         self.crime_table.setGeometry(130, 100, 754, 205)
         self.crime_table.setHorizontalHeaderLabels(['구분', '인구(만명)', '범죄건수', '인구 1만명당 범죄건수',
                                                     '범죄 건수(km²)', '검거건수', '검거율(%)', '카메라 대수',
-                                                    '카메라당 인구수(만명)'])
+                                                    '1천명당 CCTV 수'])
         # 각 열의 크기는 내용과 제목의 출력에 맞춤
         self.crime_table.setColumnWidth(0, 91)
         self.crime_table.setColumnWidth(1, 64)
@@ -186,8 +186,11 @@ class CrimeTablePage(QWidget):
     def set_table2_data(self):
         # 단순 반복 입력
         for i in range(len(self.cctv_db)):
-            for j in range(len(self.cctv_db[0])):
-                self.crime_table.setItem(i, j, QTableWidgetItem(str(self.cctv_db[i][j])))
+            # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
+            self.crime_table.setItem(i, 0, QTableWidgetItem(str(self.cctv_db[i][3])))
+            self.crime_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
+            self.crime_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][2])))
+            self.crime_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][1])))
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -197,13 +200,22 @@ class CrimeTablePage(QWidget):
         self.namboo_btn = QPushButton('남부경찰서\n현황그래프', self)
         self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
         self.go_back_btn = QPushButton('돌아가기', self)
+        self.search_btn = QPushButton('검색', self)
+        self.insert_btn = QPushButton('추가', self)
+        self.delete_btn = QPushButton('삭제', self)
         self.dongboo_btn.setGeometry(130, 700, 78, 43)
         self.seoboo_btn.setGeometry(230, 700, 78, 43)
         self.namboo_btn.setGeometry(330, 700, 78, 43)
         self.bookboo_btn.setGeometry(430, 700, 78, 43)
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
+        self.search_btn.setGeometry(350, 380, 40, 20)
+        self.insert_btn.setGeometry(405, 380, 40, 20)
+        self.delete_btn.setGeometry(460, 380, 40, 20)
 
+    def set_line(self):
+        self.search_line = QLineEdit(self)
+        self.search_line.setGeometry(130, 380, 200, 20)
 
     # db 호출 함수
     def load_db(self):
@@ -248,7 +260,7 @@ class CrimeTablePage(QWidget):
         c.close()
         conn.close()
 
-    # db 설정 함수
+    # DB 설정 함수
     def set_db(self):
         # 각 관할 경찰서 db 설정
         self.dongboo = self.db[0]
@@ -258,6 +270,12 @@ class CrimeTablePage(QWidget):
         self.bookboo = self.db[4]
         # 평균값 생성 함수 호출
         self.set_average()
+
+    # DB 추가 함수
+    # def insert_db(self):
+
+    # DB 삭제 함수
+    # def delete_db(self):
 
     # 평균값 생성 함수
     def set_average(self):
