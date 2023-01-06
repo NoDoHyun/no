@@ -31,15 +31,108 @@ class CrimeTablePage(QWidget):
         self.set_db()
         self.set_table1()
         self.set_table2()
-        self.set_btn()
         self.set_line()
+        self.set_btn()
         self.graph_list = []
         # 버튼 클릭시 각 매서드 이동
-        self.dongboo_btn.clicked.connect(lambda : self.regiongraph(0))
-        self.seoboo_btn.clicked.connect(lambda : self.regiongraph(2))
-        self.bookboo_btn.clicked.connect(lambda : self.regiongraph(4))
-        self.namboo_btn.clicked.connect(lambda : self.regiongraph(1))
-        self.gwangsan_btn.clicked.connect(lambda : self.regiongraph(3))
+        self.dongboo_btn.clicked.connect(self.dongboograph)
+        self.seoboo_btn.clicked.connect(self.seoboograph)
+        self.bookboo_btn.clicked.connect(self.bookboograph)
+        self.namboo_btn.clicked.connect(self.namboograph)
+        self.gwangsan_btn.clicked.connect(self.gwangsangraph)
+
+    # db 호출 함수
+    def load_db(self):
+        print(1)
+        # mysql 로그인 및 db 획득
+        conn = pymysql.connect(host='localhost',
+                               port=3306,
+                               user='root',
+                               passwd='1234',
+                               db='crime')
+
+        # 커서 지정
+        c = conn.cursor()
+        # 경찰서, 인구, 발생건수
+        c.execute('select b.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", b.발생건수, '
+                  # 발생건수 / 인구 * 10,000 = 인구 10,000명당 범죄율
+                  'round((b.발생건수) / a.`인구(명)` * 10000) as "인구 1만명당 범죄 건수", '
+                  # 발생건수 / km² = 면적대비 범죄율
+                  '(b.발생건수) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", '
+                  # 검거건수, 검거건수 / 발생건수 = 검거율
+                  'b.검거건수, b.검거건수/b.발생건수 * 100 as "검거율(%)", '
+                  # CCTV 갯수
+                  'round(sum(c.카메라대수)) as "CCTV 갯수", '
+                  # CCTV 갯수 / 인구 * 1,000 = 1,000명당 CCTV 수
+                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "1천명당 CCTV 수" '
+                  # 광주광역시 현황 테이블을 a로 받아옴
+                  'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
+                  # 범죄 종합 테이블을 b로 선언하며 조인
+                  'inner join `crime`.`category` as b '
+                  # CCTV 정보를 c로 선언하며 조인
+                  'inner join `crime`.`광주광역시_cctv_20220429` as c '
+                  # 주소와 경찰서명간 같은 단어(동서남북광)로 엮음
+                  'on mid(c.소재지지번주소, 7, 1) = mid(b.경찰서, 3, 1) '
+                  # 경찰서와 구 명칭 중 같은 단어로 엮음
+                  'on mid(a.구분, 7, 1) = mid(b.경찰서, 3, 1) '
+                  # 경찰서로 그룹화하여 발생건수 오름차순으로 나열
+                  'group by 경찰서, 구분 order by 발생건수')
+        # 불러온 모든 값을 db 변수에 삽입
+        self.db = c.fetchall()
+        # cctv 테이블 호출
+        c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
+        # 임시값에 내용 저장
+        temp = c.fetchall()
+        # 길이가 5 미만일 경우(아직 삭제여부가 생성되지 않았을 경우)
+        if len(temp[0]) < 5:
+            # cctv.db에 모든 내용 삽입
+            for i in range(len(temp)):
+                self.cctv_db.append(temp[i])
+        # 길이가 5 이상인 경우
+        else:
+            for i in range(len(temp)):
+                # 불러온 데이터에서 삭제여부가 Y가 아닐 때에만 self.cctv_db에 내용 삽입
+                if temp[i][4] != 'Y':
+                    self.cctv_db.append(temp[i])
+        # 커서와 커넥션 닫음
+        c.close()
+        conn.close()
+
+    # DB 설정 함수
+    def set_db(self):
+        # 각 관할 경찰서 db 설정
+        self.dongboo = self.db[0]
+        self.namboo = self.db[1]
+        self.seoboo = self.db[2]
+        self.gwangsan = self.db[3]
+        self.bookboo = self.db[4]
+        # 평균값 생성 함수 호출
+        self.set_average()
+
+    def set_line(self):
+        self.search_line = QLineEdit(self)
+        self.search_line.setGeometry(130, 380, 200, 20)
+
+    # 버튼 세팅 함수
+    def set_btn(self):
+        self.dongboo_btn = QPushButton('동부경찰서\n현황그래프', self)
+        self.seoboo_btn = QPushButton('서부경찰서\n현황그래프', self)
+        self.bookboo_btn = QPushButton('북부경찰서\n현황그래프', self)
+        self.namboo_btn = QPushButton('남부경찰서\n현황그래프', self)
+        self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
+        self.go_back_btn = QPushButton('돌아가기', self)
+        self.search_btn = QPushButton('검색', self)
+        self.insert_btn = QPushButton('추가', self)
+        self.delete_btn = QPushButton('삭제', self)
+        self.dongboo_btn.setGeometry(130, 700, 78, 43)
+        self.seoboo_btn.setGeometry(230, 700, 78, 43)
+        self.namboo_btn.setGeometry(330, 700, 78, 43)
+        self.bookboo_btn.setGeometry(430, 700, 78, 43)
+        self.gwangsan_btn.setGeometry(530, 700, 78, 43)
+        self.go_back_btn.setGeometry(804, 700, 78, 43)
+        self.search_btn.setGeometry(350, 380, 40, 20)
+        self.insert_btn.setGeometry(405, 380, 40, 20)
+        self.delete_btn.setGeometry(460, 380, 40, 20)
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
@@ -47,8 +140,20 @@ class CrimeTablePage(QWidget):
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
 
-    def regiongraph(self,int):
-        self.graph(k=int)
+    def dongboograph(self):
+        self.graph(0)
+
+    def namboograph(self):
+        self.graph(1)
+
+    def seoboograph(self):
+        self.graph(2)
+
+    def gwangsangraph(self):
+        self.graph(3)
+
+    def bookboograph(self):
+        self.graph(4)
 
     def graph_ready(self):
         # 그래프에 사용하기 좋게 데이터 리스트화
@@ -184,50 +289,55 @@ class CrimeTablePage(QWidget):
             self.cctv_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
             self.cctv_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][1])))
             self.cctv_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][2])))
+        self.cctv_table.itemChanged.connect(self.table2_modify_item)
 
     def table2_delete_item(self):
-        # mysql 로그인 및 db 획득
-        conn = pymysql.connect(host='localhost',
-                               port=3306,
-                               user='root',
-                               passwd='1234',
-                               db='crime')
+        # 삭제여부 재확인
+        reply = QMessageBox.question(self, '삭제', '삭제하시겠습니까?', QMessageBox.Yes | QMessageBox.No,
+                                     QMessageBox.No)
+        # yes 선택시 삭제 프로세스 진행
+        if reply == QMessageBox.Yes:
+            conn = pymysql.connect(host='localhost',
+                                   port=3306,
+                                   user='root',
+                                   passwd='1234',
+                                   db='crime')
 
-        # 커서 지정
-        c = conn.cursor()
-        # 삭제 처음 실행시
-        if len(self.cctv_db[0]) < 5:
-            # 테이블에 삭제여부 행 추가함
-            c.execute('alter table `crime`.`광주광역시_cctv_20220429` add column 삭제여부 text after 카메라대수')
-            # 모든 데이터의 삭제여부 행에 N값 넣어줌
-            c.execute('update `crime`.`광주광역시_cctv_20220429` set 삭제여부="N"')
-        print(self.cctv_table.currentRow())
-        print(self.cctv_db[1])
-        # 데이터 삭제를 위해 선택된 행의 지번주소 받아옴(도로명 주소는 생략된 경우 있음)
-        adress = self.cctv_db[self.cctv_table.currentRow()][2]
-        # DB상 소재지지번주소가 선택된 행의 지번주소와 같은 행을 찾아 삭제여부를 Y로 변경함
-        c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 삭제여부="Y" where 소재지지번주소="{adress}"')
-        # 커밋을 해서 변경내용 적용
-        conn.commit()
-        # 커서와 커넥션 닫음
-        c.close()
-        conn.close()
-        # 표 재출력을 위해 cctv_db 리스트 초기화
-        self.cctv_db.clear()
-        # db 리로드
-        self.load_db()
-        # cctv 표 검색 재실행
-        self.table2_search()
+            c = conn.cursor()
+            # 삭제 처음 실행시
+            if len(self.cctv_db[0]) < 5:
+                # 테이블에 삭제여부 행 추가함
+                c.execute('alter table `crime`.`광주광역시_cctv_20220429` add column 삭제여부 text after 카메라대수')
+                # 모든 데이터의 삭제여부 행에 N값 넣어줌
+                c.execute('update `crime`.`광주광역시_cctv_20220429` set 삭제여부="N"')
+            print(self.cctv_table.currentRow())
+            print(self.cctv_db[1])
+            # 데이터 삭제를 위해 선택된 행의 지번주소 받아옴(도로명 주소는 생략된 경우 있음)
+            adress = self.cctv_db[self.cctv_table.currentRow()][2]
+            # DB상 소재지지번주소가 선택된 행의 지번주소와 같은 행을 찾아 삭제여부를 Y로 변경함
+            c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 삭제여부="Y" where 소재지지번주소="{adress}"')
+            # 커밋을 해서 변경내용 적용
+            conn.commit()
+            # 커서와 커넥션 닫음
+            c.close()
+            conn.close()
+            # 표 재출력을 위해 cctv_db 리스트 초기화
+            self.cctv_db.clear()
+            # db 리로드
+            self.load_db()
+            # cctv 표 검색 재실행
+            self.table2_search()
+        else:
+            pass
 
     def table2_search(self):
-        print(2)
         search_result = []
         self.cctv_table.clear()
         # CCTV 정보 표시를 위한 4개의 열을 가짐
         self.cctv_table.setColumnCount(4)
         # 표의 크기는 종합정보표와 같음
         self.cctv_table.setGeometry(130, 405, 754, 205)
-        self.cctv_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지지번주소'])
+        self.cctv_table.setHorizontalHeaderLabels(['CCTV 대수', '관리기관명', '소재지도로명주소', '소재지지번주소'])
         for i in range(len(self.cctv_db)):
             if self.search_line.text() in self.cctv_db[i][1] or self.search_line.text() in self.cctv_db[i][2]:
                 search_result.append(self.cctv_db[i])
@@ -241,98 +351,26 @@ class CrimeTablePage(QWidget):
             self.cctv_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
         self.cctv_db = search_result
 
-    # 버튼 세팅 함수
-    def set_btn(self):
-        self.dongboo_btn = QPushButton('동부경찰서\n현황그래프', self)
-        self.seoboo_btn = QPushButton('서부경찰서\n현황그래프', self)
-        self.bookboo_btn = QPushButton('북부경찰서\n현황그래프', self)
-        self.namboo_btn = QPushButton('남부경찰서\n현황그래프', self)
-        self.gwangsan_btn = QPushButton('광산경찰서\n현황그래프', self)
-        self.go_back_btn = QPushButton('돌아가기', self)
-        self.search_btn = QPushButton('검색', self)
-        self.insert_btn = QPushButton('추가', self)
-        self.delete_btn = QPushButton('삭제', self)
-        self.dongboo_btn.setGeometry(130, 700, 78, 43)
-        self.seoboo_btn.setGeometry(230, 700, 78, 43)
-        self.namboo_btn.setGeometry(330, 700, 78, 43)
-        self.bookboo_btn.setGeometry(430, 700, 78, 43)
-        self.gwangsan_btn.setGeometry(530, 700, 78, 43)
-        self.go_back_btn.setGeometry(804, 700, 78, 43)
-        self.search_btn.setGeometry(350, 380, 40, 20)
-        self.insert_btn.setGeometry(405, 380, 40, 20)
-        self.delete_btn.setGeometry(460, 380, 40, 20)
-
-    def set_line(self):
-        self.search_line = QLineEdit(self)
-        self.search_line.setGeometry(130, 380, 200, 20)
-
-    # db 호출 함수
-    def load_db(self):
-        print(1)
-        # mysql 로그인 및 db 획득
-        conn = pymysql.connect(host='localhost',
-                               port=3306,
-                               user='root',
-                               passwd='1234',
-                               db='crime')
-
-        # 커서 지정
-        c = conn.cursor()
-        # 경찰서, 인구, 발생건수
-        c.execute('select b.경찰서, round(a.`인구(명)`/10000) as "인구(만명)", b.발생건수, '
-                  # 발생건수 / 인구 * 10,000 = 인구 10,000명당 범죄율
-                  'round((b.발생건수) / a.`인구(명)` * 10000) as "인구 1만명당 범죄 건수", '
-                  # 발생건수 / km² = 면적대비 범죄율
-                  '(b.발생건수) / `면적(제곱킬로미터)` as "범죄 건수/면적(km²)", '
-                  # 검거건수, 검거건수 / 발생건수 = 검거율
-                  'b.검거건수, b.검거건수/b.발생건수 * 100 as "검거율(%)", '
-                  # CCTV 갯수
-                  'round(sum(c.카메라대수)) as "CCTV 갯수", '
-                  # CCTV 갯수 / 인구 * 1,000 = 1,000명당 CCTV 수
-                  'sum(c.카메라대수)/a.`인구(명)`*1000 as "1천명당 CCTV 수" '
-                  # 광주광역시 현황 테이블을 a로 받아옴
-                  'from `crime`.`광주광역시_자치구별 현황_20210731` as a '
-                  # 범죄 종합 테이블을 b로 선언하며 조인
-                  'inner join `crime`.`category` as b '
-                  # CCTV 정보를 c로 선언하며 조인
-                  'inner join `crime`.`광주광역시_cctv_20220429` as c '
-                  # 주소와 경찰서명간 같은 단어(동서남북광)로 엮음
-                  'on mid(c.소재지지번주소, 7, 1) = mid(b.경찰서, 3, 1) '
-                  # 경찰서와 구 명칭 중 같은 단어로 엮음
-                  'on mid(a.구분, 7, 1) = mid(b.경찰서, 3, 1) '
-                  # 경찰서로 그룹화하여 발생건수 오름차순으로 나열
-                  'group by 경찰서, 구분 order by 발생건수')
-        # 불러온 모든 값을 db 변수에 삽입
-        self.db = c.fetchall()
-        # cctv 테이블 호출
-        c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
-        # 임시값에 내용 저장
-        temp = c.fetchall()
-        # 길이가 5 미만일 경우(아직 삭제여부가 생성되지 않았을 경우)
-        if len(temp[0]) < 5:
-            # cctv.db에 모든 내용 삽입
-            for i in range(len(temp)):
-                self.cctv_db.append(temp[i])
-        # 길이가 5 이상인 경우
-        else:
-            for i in range(len(temp)):
-                # 불러온 데이터에서 삭제여부가 Y가 아닐 때에만 self.cctv_db에 내용 삽입
-                if temp[i][4] != 'Y':
-                    self.cctv_db.append(temp[i])
-        # 커서와 커넥션 닫음
-        c.close()
-        conn.close()
-
-    # DB 설정 함수
-    def set_db(self):
-        # 각 관할 경찰서 db 설정
-        self.dongboo = self.db[0]
-        self.namboo = self.db[1]
-        self.seoboo = self.db[2]
-        self.gwangsan = self.db[3]
-        self.bookboo = self.db[4]
-        # 평균값 생성 함수 호출
-        self.set_average()
+    # DB 변경 함수
+    def table2_modify_item(self):
+        pass
+        # conn = pymysql.connect(host='localhost',
+        #                        port=3306,
+        #                        user='root',
+        #                        passwd='1234',
+        #                        db='crime')
+        #
+        # c = conn.cursor()
+        # db_header = ['카메라대수', '관리기관명', '소재지도로명주소', '소재지지번주소']
+        # adress = self.cctv_db[self.cctv_table.currentRow()][2]
+        # print(adress)
+        # print(self.cctv_table.currentItem())
+        # modify_column = db_header[self.cctv_table.currentColumn()]
+        # if self.cctv_table.currentColumn() == 0:
+        #     c.execute(f'update  `crime`.`광주광역시_cctv_20220429` set {modify_column}={self.cctv_table.currentItem()} where 소재지지번주소="{adress}"')
+        # else:
+        #     c.execute(f'update  `crime`.`광주광역시_cctv_20220429` set {modify_column}="{self.cctv_table.currentItem()}" where 소재지지번주소="{adress}"')
+        # conn.commit()
 
     # DB 추가 함수
     def table2_insert_item(self):
