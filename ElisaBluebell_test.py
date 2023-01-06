@@ -29,6 +29,8 @@ class CrimeTablePage(QWidget):
         # db 세팅
         self.load_db()
         self.set_db()
+        # ui 세팅
+        self.set_label()
         self.set_table1()
         self.set_table2()
         self.set_line()
@@ -107,7 +109,7 @@ class CrimeTablePage(QWidget):
     def set_line(self):
         # 검색을 위한 라인에딧 설정함
         self.search_line = QLineEdit(self)
-        self.search_line.setGeometry(130, 380, 200, 20)
+        self.search_line.setGeometry(190, 380, 200, 20)
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -127,10 +129,10 @@ class CrimeTablePage(QWidget):
         self.bookboo_btn.setGeometry(430, 700, 78, 43)
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
-        self.search_btn.setGeometry(350, 380, 40, 20)
-        self.save_btn.setGeometry(405, 380, 40, 20)
-        self.delete_btn.setGeometry(460, 380, 40, 20)
-        self.insert_btn.setGeometry(515, 380, 40, 20)
+        self.search_btn.setGeometry(410, 380, 40, 20)
+        self.save_btn.setGeometry(465, 380, 40, 20)
+        self.delete_btn.setGeometry(520, 380, 40, 20)
+        self.insert_btn.setGeometry(575, 380, 40, 20)
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
@@ -141,6 +143,19 @@ class CrimeTablePage(QWidget):
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
 
+    # 라벨 세팅
+    def set_label(self):
+        from PyQt5.QtCore import Qt
+        self.table1_label = QLabel('광주광역시 종합현황표', self)
+        self.table2_label = QLabel('CCTV 종합정보', self)
+        self.search_label = QLabel('주소 입력', self)
+        self.table1_label.setGeometry(0, 40, 1024, 20)
+        self.table2_label.setGeometry(0, 345, 1024, 20)
+        self.search_label.setGeometry(130, 380, 60, 20)
+        self.table1_label.setAlignment(Qt.AlignCenter)
+        self.table2_label.setAlignment(Qt.AlignCenter)
+
+    # CCTV 정보 추가 새 창 출력
     def popup_insert_dialog(self):
         self.insert_dialog.show()
 
@@ -224,7 +239,7 @@ class CrimeTablePage(QWidget):
         self.crime_table.setColumnCount(9)
         self.crime_table.setGeometry(130, 100, 754, 205)
         self.crime_table.setHorizontalHeaderLabels(['구분', '인구(만명)', '범죄건수', '인구 1만명당 범죄건수',
-                                                    '범죄 건수(km²)', '검거건수', '검거율(%)', '카메라 대수',
+                                                    '범죄 건수(km²)', '검거건수', '검거율(%)', 'CCTV 대수',
                                                     '1천명당 CCTV 수'])
         # 각 열의 크기는 내용과 제목의 출력에 맞춤
         self.crime_table.setColumnWidth(0, 91)
