@@ -14,6 +14,7 @@ class CrimeTablePage(QWidget):
     def __init__(self):
         super().__init__()
         # 변수 선언
+        self.insert_dialog = InsertDialog()
         self.db = []
         self.selected_row = []
         self.db_average = ['평균', 0, 0, 0, 0, 0, 0, 0, 0]
@@ -119,6 +120,7 @@ class CrimeTablePage(QWidget):
         self.search_btn = QPushButton('검색', self)
         self.delete_btn = QPushButton('삭제', self)
         self.save_btn = QPushButton('저장', self)
+        self.insert_btn = QPushButton('추가', self)
         self.dongboo_btn.setGeometry(130, 700, 78, 43)
         self.seoboo_btn.setGeometry(230, 700, 78, 43)
         self.namboo_btn.setGeometry(330, 700, 78, 43)
@@ -128,14 +130,19 @@ class CrimeTablePage(QWidget):
         self.search_btn.setGeometry(350, 380, 40, 20)
         self.save_btn.setGeometry(405, 380, 40, 20)
         self.delete_btn.setGeometry(460, 380, 40, 20)
+        self.insert_btn.setGeometry(515, 380, 40, 20)
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
         self.save_btn.clicked.connect(self.save_db)
         self.delete_btn.clicked.connect(self.table2_delete_item)
         self.go_back_btn.clicked.connect(self.go_back)
+        self.insert_btn.clicked.connect(self.popup_insert_dialog)
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
+
+    def popup_insert_dialog(self):
+        self.insert_dialog.show()
 
     def go_back(self):
         self.parent().setCurrentIndex(0)
@@ -394,3 +401,68 @@ class CrimeTablePage(QWidget):
         for i in range(1, len(self.db_average)):
             # 각 열을 받아온 db의 행의 갯수로 나누어 평균을 구함
             self.db_average[i] /= len(self.db)
+
+
+class InsertDialog(QWidget):
+
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(300, 150, 200, 250)
+        self.set_label()
+        self.set_btn()
+        self.set_line()
+        self.set_combo()
+
+    def set_label(self):
+        # 라벨 텍스트 중앙 정렬을 위한 Qt 로컬 호출
+        from PyQt5.QtCore import Qt
+        self.title_label = QLabel('CCTV 설치 현황 추가', self)
+        self.street_label = QLabel('도로명주소', self)
+        self.legacy_label = QLabel('지번주소', self)
+        self.cctv_label = QLabel('CCTV 설치 대수', self)
+        self.title_label.setGeometry(0, 20, 200, 20)
+        self.street_label.setGeometry(0, 50, 200, 20)
+        self.legacy_label.setGeometry(0, 100, 200, 20)
+        self.cctv_label.setGeometry(0, 150, 200, 20)
+        self.title_label.setAlignment(Qt.AlignCenter)
+        self.street_label.setAlignment(Qt.AlignCenter)
+        self.legacy_label.setAlignment(Qt.AlignCenter)
+        self.cctv_label.setAlignment(Qt.AlignCenter)
+
+    def set_combo(self):
+        self.cctv_combo = QComboBox(self)
+        self.cctv_combo.setGeometry(70, 170, 60, 20)
+        for i in range(1, 10):
+            self.cctv_combo.addItem(str(i), i)
+
+    def set_line(self):
+        self.street_adress = QLineEdit(self)
+        self.legacy_adress = QLineEdit(self)
+        self.street_adress.setGeometry(20, 70, 160, 20)
+        self.legacy_adress.setGeometry(20, 120, 160, 20)
+
+    def set_btn(self):
+        self.go_back_btn = QPushButton('닫기', self)
+        self.insert_btn = QPushButton('추가', self)
+        self.go_back_btn.setGeometry(110, 220, 40, 20)
+        self.insert_btn.setGeometry(50, 220, 40, 20)
+        self.go_back_btn.clicked.connect(self.close_dialog)
+        self.insert_btn.clicked.connect(self.insert_data)
+
+    def close_dialog(self):
+        self.close()
+
+    def insert_data(self):
+        import pymysql
+        conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='1234', db='crime')
+        # 커서 지정
+        c = conn.cursor()
+        if not self.legacy_adress.text():
+            warn = QMessageBox.warning(self, '주소 입력', '지번 주소를 입력해주세요.')
+        else:
+            c.execute(f'''insert into `crime`.`광주광역시_cctv_20220429` (관리기관명, 소재지도로명주소, 소재지지번주소,
+             카메라대수) values ("광주광역시 사회재난과", "{self.street_adress.text()}", "{self.legacy_adress.text()}"
+             , {self.cctv_combo.currentData()})''')
+            conn.commit()
+            complete = QMessageBox.information(self, '추가 성공', 'CCTV 정보가 등록되었습니다.')
+
