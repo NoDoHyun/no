@@ -153,6 +153,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.fill()
 
     def fill(self):
+        self.con1()
         count = 0
         count3 = 1
         lis = []
@@ -172,6 +173,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             count += 1
 
     def fill2(self,word):
+        self.con1()
         self.tableWidget.setRowCount(0)
         for i in self.a:
             if i[0] == word:
@@ -180,6 +182,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
                     self.tableWidget.setItem(0, j, QTableWidgetItem(str(i[j])))
 
     def rev(self):
+        self.con1()
         count1=0
         row=self.tableWidget.currentRow()
         col=self.tableWidget.currentColumn()
@@ -199,6 +202,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             count1+=1
 
     def ins(self):
+        self.con1()
         word = self.lineEdit2.text()
         words = word.split(',')
         self.cur.execute(f"insert into `crime`.`category` values('{words[0]}',{words[1]},{words[2]},{words[3]},{words[4]},{words[5]},{words[6]})")
