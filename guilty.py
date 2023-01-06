@@ -39,6 +39,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.lineEdit2.returnPressed.connect(self.ins)
         self.back1.clicked.connect(lambda: self.back(0))
         self.guilb.clicked.connect(lambda: self.back(3))
+        self.guilb2.clicked.connect(lambda: self.back(2))
         self.guilb3.clicked.connect(self.another_path)
         self.back_2.clicked.connect(lambda: self.back(0))
         self.delb.clicked.connect(self.del1)
@@ -286,6 +287,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.backimg.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
         self.backimg2.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
         self.backimg3.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.backimg4.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
         self.label_2.setStyleSheet("background-color: white")
         self.label_3.setStyleSheet("background-color: white")
 
