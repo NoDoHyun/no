@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="guilb">
@@ -31,34 +31,21 @@
       <rect>
        <x>170</x>
        <y>160</y>
-       <width>131</width>
-       <height>61</height>
+       <width>251</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="text">
       <string>범죄율 보기</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="guilb2">
-     <property name="geometry">
-      <rect>
-       <x>430</x>
-       <y>160</y>
-       <width>131</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>i</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="guilb3">
      <property name="geometry">
       <rect>
-       <x>720</x>
+       <x>630</x>
        <y>160</y>
-       <width>131</width>
-       <height>61</height>
+       <width>251</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="text">
@@ -80,7 +67,6 @@
     </widget>
     <zorder>backimg</zorder>
     <zorder>guilb</zorder>
-    <zorder>guilb2</zorder>
     <zorder>guilb3</zorder>
    </widget>
    <widget class="QWidget" name="page_2">
