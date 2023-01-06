@@ -24,23 +24,23 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.setupUi(self)
         self.name=['광주북부경찰서','광주광산경찰서','광주서부경찰서','광주남부경찰서','광주동부경찰서']
         self.name2=['경찰서','발생건수', '검거건수', '검거인원', '구속', '불구속', '기타']
-        self.gwangsan.clicked.connect(self.num5)
-        self.east.clicked.connect(self.num1)
-        self.west.clicked.connect(self.num2)
-        self.south.clicked.connect(self.num3)
-        self.north.clicked.connect(self.num4)
-        self.allspace.clicked.connect(self.path3)
-        self.allspace2.clicked.connect(self.path2)
-        self.allspace3.clicked.connect(self.path1)
-        self.cl.clicked.connect(self.path4)
+        self.gwangsan.clicked.connect(lambda: self.num1(4))
+        self.east.clicked.connect(lambda: self.num1(0))
+        self.west.clicked.connect(lambda: self.num1(1))
+        self.south.clicked.connect(lambda: self.num1(2))
+        self.north.clicked.connect(lambda: self.num1(3))
+        self.allspace.clicked.connect(lambda: self.path1(3))
+        self.allspace2.clicked.connect(lambda: self.path1(2))
+        self.allspace3.clicked.connect(lambda: self.path1(1))
+        self.cl.clicked.connect(lambda: self.path1(4))
         self.nex.clicked.connect(self.fin)
         self.tableWidget.cellChanged.connect(self.rev)
         self.lineEdit1.returnPressed.connect(self.fin2)
         self.lineEdit2.returnPressed.connect(self.ins)
-        self.back1.clicked.connect(self.back)
-        self.guilb.clicked.connect(self.back2)
+        self.back1.clicked.connect(lambda: self.back(0))
+        self.guilb.clicked.connect(lambda: self.back(3))
         self.guilb3.clicked.connect(self.another_path)
-        self.back_2.clicked.connect(self.back)
+        self.back_2.clicked.connect(lambda: self.back(0))
         self.delb.clicked.connect(self.del1)
         self.statusbar = self.statusBar()
         self.gra2=[]
@@ -139,18 +139,11 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.stackedWidget.setCurrentIndex(1)
         self.tableWidget.setRowCount(0)
 
-    def back(self):
-        self.stackedWidget.setCurrentIndex(0)
-    def back2(self):
-        self.stackedWidget.setCurrentIndex(3)
-    def path1(self):
-        self.all(1)
-    def path2(self):
-        self.all(2)
-    def path3(self):
-        self.all(3)
-    def path4(self):
-        self.all(4)
+    def back(self,n):
+        self.stackedWidget.setCurrentIndex(n)
+
+    def path1(self,n):
+        self.all(n)
 
     def fin2(self):
         word=self.lineEdit1.text()
@@ -174,7 +167,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             count2 = 0
             for k in j:
                 self.tableWidget.setItem(count, count2, QTableWidgetItem(str(k)))
-                print(count, count2, k)
+                # print(count, count2, k)
                 count2 += 1
             count += 1
 
@@ -190,17 +183,18 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         count1=0
         row=self.tableWidget.currentRow()
         col=self.tableWidget.currentColumn()
-        item=self.tableWidget.currentItem().text()
+
         sql = "Select * from `crime`.`category`"
         self.cur.execute(sql)
         self.a = self.cur.fetchall()
         for i in self.a:
             if row==count1:
+                item=self.tableWidget.currentItem().text()
                 cols=(i[0])
                 # self.cur.execute(f"UPDATE `crime`.`category` SET 기타= 369 where 경찰서='광주동부경찰서'")
                 self.cur.execute(f"UPDATE `crime`.`category` SET {self.name2[col]}={item} where 경찰서='{cols}'")
                 self.con.commit()
-                print(i[6],self.name2[col])
+                # print(i[6],self.name2[col])
                 # break
             count1+=1
 
@@ -215,20 +209,13 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         row=self.tableWidget.currentRow()
         col=self.tableWidget.currentColumn()
         item=self.tableWidget.item(row, col).text()
-        print(item)
+        # print(item)
         self.cur.execute(f"DELETE FROM `crime`.`category` WHERE 경찰서='{item}'")
         self.con.commit()
 
-    def num1(self):
-        self.g(0)
-    def num2(self):
-        self.g(1)
-    def num3(self):
-        self.g(2)
-    def num4(self):
-        self.g(3)
-    def num5(self):
-        self.g(4)
+    def num1(self,n):
+        self.g(n)
+
     def g(self,num):
         n = num
         gra = []
@@ -239,7 +226,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
 
     def mouseMoveEvent(self, e):
         txt = "Mouse 위치 ; x={0},y={1}, global={2},{3}".format(e.x(), e.y(), e.globalX(), e.globalY())
-        self.statusbar.showMessage(txt)
+        # self.statusbar.showMessage(txt)
         if e.x()>=449 and e.x()<=484 and e.y()>=228 and e.y()<=621:
             self.label_2.setText(str(self.gra2[3]))
             self.label_3.setText('광주북구')
@@ -277,6 +264,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         ax = self.widget.getAxis('bottom')
         ax.setTicks(ticks)
         if num==4:
+            self.gra2 = []
             self.widget.clear()
         if num==1:
             self.widget.addItem(bargraph)
@@ -311,5 +299,4 @@ if __name__ == "__main__" :
     widget.setFixedWidth(1024)
 
     widget.show()
-    # myWindow.show()
     app.exec_()
