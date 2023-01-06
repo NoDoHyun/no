@@ -252,6 +252,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.label_3.clear()
 
     def all(self,num):
+        self.con1()
         n=[0,1,2,3,4]
         xlab = ['광주북구','광주광산구','광주서구','광주남구','광주동구']
         xval = list(range(1, len(xlab) + 1))
