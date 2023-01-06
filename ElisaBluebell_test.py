@@ -35,11 +35,11 @@ class CrimeTablePage(QWidget):
         self.set_line()
         self.graph_list = []
         # 버튼 클릭시 각 매서드 이동
-        self.dongboo_btn.clicked.connect(self.dongboograph)
-        self.seoboo_btn.clicked.connect(self.seoboograph)
-        self.bookboo_btn.clicked.connect(self.bookboograph)
-        self.namboo_btn.clicked.connect(self.namboograph)
-        self.gwangsan_btn.clicked.connect(self.gwangsangraph)
+        self.dongboo_btn.clicked.connect(lambda : self.regiongraph(0))
+        self.seoboo_btn.clicked.connect(lambda : self.regiongraph(2))
+        self.bookboo_btn.clicked.connect(lambda : self.regiongraph(4))
+        self.namboo_btn.clicked.connect(lambda : self.regiongraph(1))
+        self.gwangsan_btn.clicked.connect(lambda : self.regiongraph(3))
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
@@ -47,20 +47,8 @@ class CrimeTablePage(QWidget):
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
 
-    def dongboograph(self):
-        self.graph(0)
-
-    def namboograph(self):
-        self.graph(1)
-
-    def seoboograph(self):
-        self.graph(2)
-
-    def gwangsangraph(self):
-        self.graph(3)
-
-    def bookboograph(self):
-        self.graph(4)
+    def regiongraph(self,int):
+        self.graph(k=int)
 
     def graph_ready(self):
         # 그래프에 사용하기 좋게 데이터 리스트화
