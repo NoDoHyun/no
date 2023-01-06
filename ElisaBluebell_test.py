@@ -43,7 +43,6 @@ class CrimeTablePage(QWidget):
 
     # db 호출 함수
     def load_db(self):
-        print(1)
         # mysql 로그인 및 db 획득
         conn = pymysql.connect(host='localhost',
                                port=3306,
@@ -79,6 +78,7 @@ class CrimeTablePage(QWidget):
                   'group by 경찰서, 구분 order by 발생건수')
         # 불러온 모든 값을 db 변수에 삽입
         self.db = c.fetchall()
+        print(self.db)
         # cctv 테이블 호출
         c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
         # 임시값에 내용 저장
