@@ -268,7 +268,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         gra2=self.gra2
         ticks = []
         num2=self.combo_select()
-        print(num2)
+        # print(num2)
 
         for i, item in enumerate(xlab):
             ticks.append((xval[i], item))
