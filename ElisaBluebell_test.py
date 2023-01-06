@@ -16,6 +16,7 @@ class CrimeTablePage(QWidget):
     def __init__(self):
         super().__init__()
         # 변수 선언
+        self.insert_dialog = InsertDialog()
         self.db = []
         self.selected_row = []
         self.db_average = ['평균', 0, 0, 0, 0, 0, 0, 0, 0]
@@ -141,8 +142,13 @@ class CrimeTablePage(QWidget):
         self.search_btn.clicked.connect(self.table2_search)
         self.delete_btn.clicked.connect(self.table2_delete_item)
         self.save_btn.clicked.connect(self.save_db)
+        self.go_back_btn.clicked.connect(self.go_back)
+        self.insert_btn.clicked.connect(self.table2_insert_item)
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
+
+    def go_back(self):
+        self.parent().setCurrentIndex(0)
 
     def dongboograph(self):
         self.graph(0)
@@ -396,7 +402,7 @@ class CrimeTablePage(QWidget):
 
     # DB 추가 함수
     def table2_insert_item(self):
-        pass
+        self.insert_dialog.show()
 
     # 평균값 생성 함수
     def set_average(self):
@@ -410,6 +416,12 @@ class CrimeTablePage(QWidget):
         for i in range(1, len(self.db_average)):
             # 각 열을 받아온 db의 행의 갯수로 나누어 평균을 구함
             self.db_average[i] /= len(self.db)
+
+
+class InsertDialog(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setGeometry(420, 120, 250, 400)
 
 
 if __name__ == "__main__":
