@@ -43,6 +43,7 @@ class CrimeTablePage(QWidget):
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
+        self.delete_btn.clicked.connect(self.table2_delete_item)
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
 
@@ -168,21 +169,21 @@ class CrimeTablePage(QWidget):
 
     # cctv 정보 확인을 위한 2번째 테이블 작성
     def set_table2(self):
-        self.crime_table = QTableWidget(self)
+        self.cctv_table = QTableWidget(self)
         # cctv_db 튜플의 길이만큼 행 설정
-        self.crime_table.setRowCount(len(self.cctv_db))
+        self.cctv_table.setRowCount(len(self.cctv_db))
         # CCTV 정보 표시를 위한 4개의 열을 가짐
-        self.crime_table.setColumnCount(4)
+        self.cctv_table.setColumnCount(4)
         # 표의 크기는 종합정보표와 같음
-        self.crime_table.setGeometry(130, 405, 754, 205)
-        self.crime_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지번지주소'])
+        self.cctv_table.setGeometry(130, 405, 754, 205)
+        self.cctv_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지지번주소'])
         # 1열과 2열은 헤더와 내용을 출력하기에 부족함이 없게, 나머지 3, 4열에 분배
-        self.crime_table.setColumnWidth(0, 72)
-        self.crime_table.setColumnWidth(1, 131)
-        self.crime_table.setColumnWidth(2, 266)
-        self.crime_table.setColumnWidth(3, 266)
+        self.cctv_table.setColumnWidth(0, 72)
+        self.cctv_table.setColumnWidth(1, 131)
+        self.cctv_table.setColumnWidth(2, 266)
+        self.cctv_table.setColumnWidth(3, 266)
         # 버티컬헤더 없음
-        self.crime_table.verticalHeader().setVisible(False)
+        self.cctv_table.verticalHeader().setVisible(False)
         # cctv_db에서 받아온 데이터를 표에 입력해주는 함수 호출
         self.set_table2_data()
 
@@ -191,31 +192,65 @@ class CrimeTablePage(QWidget):
         # 단순 반복 입력
         for i in range(len(self.cctv_db)):
             # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
-            self.crime_table.setItem(i, 0, QTableWidgetItem(str(self.cctv_db[i][3])))
-            self.crime_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
-            self.crime_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][1])))
-            self.crime_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][2])))
+            self.cctv_table.setItem(i, 0, QTableWidgetItem(str(self.cctv_db[i][3])))
+            self.cctv_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
+            self.cctv_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][1])))
+            self.cctv_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][2])))
+
+    def table2_delete_item(self):
+        # mysql 로그인 및 db 획득
+        conn = pymysql.connect(host='localhost',
+                               port=3306,
+                               user='root',
+                               passwd='1234',
+                               db='crime')
+
+        # 커서 지정
+        c = conn.cursor()
+        # 삭제 처음 실행시
+        if len(self.cctv_db[0]) < 5:
+            # 테이블에 삭제여부 행 추가함
+            c.execute('alter table `crime`.`광주광역시_cctv_20220429` add column 삭제여부 text after 카메라대수')
+            # 모든 데이터의 삭제여부 행에 N값 넣어줌
+            c.execute('update `crime`.`광주광역시_cctv_20220429` set 삭제여부="N"')
+        print(self.cctv_table.currentRow())
+        print(self.cctv_db[1])
+        # 데이터 삭제를 위해 선택된 행의 지번주소 받아옴(도로명 주소는 생략된 경우 있음)
+        adress = self.cctv_db[self.cctv_table.currentRow()][2]
+        # DB상 소재지지번주소가 선택된 행의 지번주소와 같은 행을 찾아 삭제여부를 Y로 변경함
+        c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 삭제여부="Y" where 소재지지번주소="{adress}"')
+        # 커밋을 해서 변경내용 적용
+        conn.commit()
+        # 커서와 커넥션 닫음
+        c.close()
+        conn.close()
+        # 표 재출력을 위해 cctv_db 리스트 초기화
+        self.cctv_db.clear()
+        # db 리로드
+        self.load_db()
+        # cctv 표 검색 재실행
+        self.table2_search()
 
     def table2_search(self):
+        print(2)
         search_result = []
-        self.crime_table.clear()
+        self.cctv_table.clear()
         # CCTV 정보 표시를 위한 4개의 열을 가짐
-        self.crime_table.setColumnCount(4)
+        self.cctv_table.setColumnCount(4)
         # 표의 크기는 종합정보표와 같음
-        self.crime_table.setGeometry(130, 405, 754, 205)
-        self.crime_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지번지주소'])
+        self.cctv_table.setGeometry(130, 405, 754, 205)
+        self.cctv_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지지번주소'])
         for i in range(len(self.cctv_db)):
             if self.search_line.text() in self.cctv_db[i][1] or self.search_line.text() in self.cctv_db[i][2]:
                 search_result.append(self.cctv_db[i])
-        # cctv_db 튜플의 길이만큼 행 설정
-        self.crime_table.setRowCount(len(search_result))
+        # cctv_db 리스트의 길이만큼 행 설정
+        self.cctv_table.setRowCount(len(search_result))
         for i in range(len(search_result)):
             # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
-            self.crime_table.setItem(i, 0, QTableWidgetItem(str(search_result[i][3])))
-            self.crime_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
-            self.crime_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
-            self.crime_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
-
+            self.cctv_table.setItem(i, 0, QTableWidgetItem(str(search_result[i][3])))
+            self.cctv_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
+            self.cctv_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
+            self.cctv_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -244,6 +279,7 @@ class CrimeTablePage(QWidget):
 
     # db 호출 함수
     def load_db(self):
+        print(1)
         # mysql 로그인 및 db 획득
         conn = pymysql.connect(host='localhost',
                                port=3306,
@@ -279,8 +315,21 @@ class CrimeTablePage(QWidget):
                   'group by 경찰서, 구분 order by 발생건수')
         # 불러온 모든 값을 db 변수에 삽입
         self.db = c.fetchall()
+        # cctv 테이블 호출
         c.execute('select * from `crime`.`광주광역시_cctv_20220429`')
-        self.cctv_db = c.fetchall()
+        # 임시값에 내용 저장
+        temp = c.fetchall()
+        # 길이가 5 미만일 경우(아직 삭제여부가 생성되지 않았을 경우)
+        if len(temp[0]) < 5:
+            # cctv.db에 모든 내용 삽입
+            for i in range(len(temp)):
+                self.cctv_db.append(temp[i])
+        # 길이가 5 이상인 경우
+        else:
+            for i in range(len(temp)):
+                # 불러온 데이터에서 삭제여부가 Y가 아닐 때에만 self.cctv_db에 내용 삽입
+                if temp[i][4] != 'Y':
+                    self.cctv_db.append(temp[i])
         # 커서와 커넥션 닫음
         c.close()
         conn.close()
