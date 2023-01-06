@@ -16,7 +16,6 @@ class CrimeTablePage(QWidget):
     def __init__(self):
         super().__init__()
         # 변수 선언
-        self.insert_dialog = InsertDialog()
         self.db = []
         self.selected_row = []
         self.db_average = ['평균', 0, 0, 0, 0, 0, 0, 0, 0]
@@ -45,14 +44,8 @@ class CrimeTablePage(QWidget):
 
     # db 호출 함수
     def load_db(self):
-        print(1)
         # mysql 로그인 및 db 획득
-        conn = pymysql.connect(host='localhost',
-                               port=3306,
-                               user='root',
-                               passwd='1234',
-                               db='crime')
-
+        conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='1234', db='crime')
         # 커서 지정
         c = conn.cursor()
         # 경찰서, 인구, 발생건수
@@ -111,7 +104,9 @@ class CrimeTablePage(QWidget):
         # 평균값 생성 함수 호출
         self.set_average()
 
+    # 라인에딧 설정
     def set_line(self):
+        # 검색을 위한 라인에딧 설정함
         self.search_line = QLineEdit(self)
         self.search_line.setGeometry(130, 380, 200, 20)
 
@@ -134,16 +129,14 @@ class CrimeTablePage(QWidget):
         self.gwangsan_btn.setGeometry(530, 700, 78, 43)
         self.go_back_btn.setGeometry(804, 700, 78, 43)
         self.search_btn.setGeometry(350, 380, 40, 20)
-        self.insert_btn.setGeometry(405, 380, 40, 20)
+        self.save_btn.setGeometry(405, 380, 40, 20)
         self.delete_btn.setGeometry(460, 380, 40, 20)
-        self.save_btn.setGeometry(515, 380, 40, 20)
         # 버튼 스위치
         # 검색 버튼 클릭시 검색 기능 실행
         self.search_btn.clicked.connect(self.table2_search)
-        self.delete_btn.clicked.connect(self.table2_delete_item)
         self.save_btn.clicked.connect(self.save_db)
+        self.delete_btn.clicked.connect(self.table2_delete_item)
         self.go_back_btn.clicked.connect(self.go_back)
-        self.insert_btn.clicked.connect(self.table2_insert_item)
         # 검색창 엔터시 검색 기능 실행
         self.search_line.returnPressed.connect(self.table2_search)
 
@@ -307,11 +300,7 @@ class CrimeTablePage(QWidget):
                                      QMessageBox.No)
         # yes 선택시 삭제 프로세스 진행
         if reply == QMessageBox.Yes:
-            conn = pymysql.connect(host='localhost',
-                                   port=3306,
-                                   user='root',
-                                   passwd='1234',
-                                   db='crime')
+            conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='1234', db='crime')
             c = conn.cursor()
             # 삭제 처음 실행시
             if len(self.cctv_db[0]) < 5:
@@ -319,8 +308,6 @@ class CrimeTablePage(QWidget):
                 c.execute('alter table `crime`.`광주광역시_cctv_20220429` add column 삭제여부 text after 카메라대수')
                 # 모든 데이터의 삭제여부 행에 N값 넣어줌
                 c.execute('update `crime`.`광주광역시_cctv_20220429` set 삭제여부="N"')
-            print(self.cctv_table.currentRow())
-            print(self.cctv_db[1])
             # 데이터 삭제를 위해 선택된 행의 지번주소 받아옴(도로명 주소는 생략된 경우 있음)
             adress = self.cctv_db[self.cctv_table.currentRow()][2]
             # DB상 소재지지번주소가 선택된 행의 지번주소와 같은 행을 찾아 삭제여부를 Y로 변경함
@@ -339,10 +326,10 @@ class CrimeTablePage(QWidget):
         else:
             pass
 
+    # 수정을 위한 선택행 저장 함수
     def save_data(self):
         if self.cctv_table.currentRow() not in self.selected_row:
             self.selected_row.append(self.cctv_table.currentRow())
-        print(self.selected_row)
 
     # 데이터 저장
     def save_db(self):
@@ -351,22 +338,18 @@ class CrimeTablePage(QWidget):
                                      QMessageBox.No)
         # 예 누를 시 데이터 저장
         if reply == QMessageBox.Yes:
-            conn = pymysql.connect(host='localhost',
-                                   port=3306,
-                                   user='root',
-                                   passwd='1234',
-                                   db='crime')
+            conn = pymysql.connect(host='localhost', port=3306, user='root', passwd='1234', db='crime')
             c = conn.cursor()
             while self.selected_row:
-                print(self.cctv_table.item(self.selected_row[0], 3).text())
-                # 데이터 리스트에 변경된 값 적용
-                c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 카메라대수={int(self.cctv_table.item(self.selected_row[0], 0).text())} ,관리기관명="{self.cctv_table.item(self.selected_row[0], 1).text()}", 소재지도로명주소="{self.cctv_table.item(self.selected_row[0], 2).text()}", 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}" where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"')
-                print(1)
-                # c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 관리기관명="{self.cctv_table.item(self.selected_row[0], 1).text()}" where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"')
-                # c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 소재지도로명주소="{self.cctv_table.item(self.selected_row[0], 2).text()}" where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"')
-                # c.execute(f'update `crime`.`광주광역시_cctv_20220429` set 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}" where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"')
-                # 적용된 업체를 리스트에서 제거
+                # 데이터 리스트에 각각의 변경된 값 적용
+                c.execute(f'''update `crime`.`광주광역시_cctv_20220429` 
+                set 카메라대수={int(self.cctv_table.item(self.selected_row[0], 0).text())} ,
+                관리기관명="{self.cctv_table.item(self.selected_row[0], 1).text()}", 
+                소재지도로명주소="{self.cctv_table.item(self.selected_row[0], 2).text()}", 
+                소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}" 
+                where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"''')
                 conn.commit()
+                # 적용한 업체를 리스트에서 제거
                 self.selected_row.remove(self.selected_row[0])
             c.close()
             conn.close()
@@ -377,32 +360,30 @@ class CrimeTablePage(QWidget):
             # cctv 표 검색 재실행
             self.table2_search()
 
+    # 데이터 검색 함수
     def table2_search(self):
+        # 검색에 활용할 리스트 선언
         search_result = []
+        # cctv_db와 테이블 리셋
         self.cctv_db.clear()
         self.load_db()
         self.cctv_table.clear()
-        # CCTV 정보 표시를 위한 4개의 열을 가짐
-        self.cctv_table.setColumnCount(4)
-        # 표의 크기는 종합정보표와 같음
-        self.cctv_table.setGeometry(130, 405, 754, 205)
+        # cctv_table 라벨 설정
         self.cctv_table.setHorizontalHeaderLabels(['CCTV 대수', '관리기관명', '소재지도로명주소', '소재지지번주소'])
+        # 도로명 주소와 지번 주소 중 lineedit text와 일치하는 내역이 있는지 확인(관리기관은 전부 동일하므로 검색 제외)
         for i in range(len(self.cctv_db)):
             if self.search_line.text() in self.cctv_db[i][1] or self.search_line.text() in self.cctv_db[i][2]:
                 search_result.append(self.cctv_db[i])
         # cctv_db 리스트의 길이만큼 행 설정
         self.cctv_table.setRowCount(len(search_result))
         for i in range(len(search_result)):
-            # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
+            # table2 DB와 칼럼 순서를 일치시키기 위해 수도
             self.cctv_table.setItem(i, 0, QTableWidgetItem(str(search_result[i][3])))
             self.cctv_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
             self.cctv_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
             self.cctv_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
+        # 수정에서 사용하기 위해 cctv_db에 실제 표에 삽입된 데이터를 넣음
         self.cctv_db = search_result
-
-    # DB 추가 함수
-    def table2_insert_item(self):
-        self.insert_dialog.show()
 
     # 평균값 생성 함수
     def set_average(self):
@@ -418,14 +399,8 @@ class CrimeTablePage(QWidget):
             self.db_average[i] /= len(self.db)
 
 
-class InsertDialog(QWidget):
-    def __init__(self):
-        super().__init__()
-        self.setGeometry(420, 120, 250, 400)
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = CrimeTablePage()
-    ex.show()
-    app.exec_()
+# if __name__ == "__main__":
+#     app = QApplication(sys.argv)
+#     ex = CrimeTablePage()
+#     ex.show()
+#     app.exec_()
