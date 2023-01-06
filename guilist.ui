@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="page_5">
     <widget class="QPushButton" name="guilb">
@@ -113,6 +113,32 @@
      </property>
      <property name="text">
       <string>돌아가기</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="generation_btn">
+     <property name="geometry">
+      <rect>
+       <x>270</x>
+       <y>490</y>
+       <width>131</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>관할별 발생건수(%)</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="arrest_unarrest_btn">
+     <property name="geometry">
+      <rect>
+       <x>540</x>
+       <y>490</y>
+       <width>191</width>
+       <height>41</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>관할별 검거/미검거건수(%)</string>
      </property>
     </widget>
    </widget>

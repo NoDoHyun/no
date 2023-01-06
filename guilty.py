@@ -40,6 +40,85 @@ class WindowClass(QMainWindow, form_class) :
         self.back_2.clicked.connect(self.back)
 
         self.con()
+
+        # 그래프 관련 버튼 클릭시 해당 메서드로 연결
+        self.generation_btn.clicked.connect(self.generation_graph)
+        self.arrest_unarrest_btn.clicked.connect(self.arrest_unarrest_graph)
+        # 그래프에 들어갈 내용 전체 리스트
+        self.total_graph_list=[]
+
+    # 파이차트 만들기 위해 비율 계산하는 매서드
+    def piegraph_ready(self):
+        generation_sum=0
+        arrest_sum=0
+        unarrest_sum=0
+        unarrest=[]
+        generation_list=[]
+        arrest_list=[]
+        unarrest_list=[]
+
+        # 발생건수 계 구하기
+        for i in range(len(self.a)):
+            generation_sum += self.a[i][1]
+        # 검거건수 계 구하기
+        for j in range(len(self.a)):
+            arrest_sum += self.a[j][2]
+        # 미검거건수 계 구하기
+        unarrest_sum=generation_sum - arrest_sum
+
+        # 미검거건수 리스트 만들기
+        for i in range(len(self.a)):
+            unarrest.append(self.a[i][1]-self.a[i][2])
+
+        # 발생건수, 전체발생건수 값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(self.a[i][1]/generation_sum) *100
+            generation_list.append(a)
+        # 검거건수, 발생건수값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(self.a[i][2]/generation_sum) *100
+            arrest_list.append(a)
+        # 미검거건수, 발생건수값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(unarrest[i]/generation_sum) *100
+            unarrest_list.append(a)
+
+        self.total_graph_list=[generation_list,arrest_list,unarrest_list,['동부','서부','남부','북부','광산']
+            ,['범죄 발생건수','범죄 검거/미검거건수'],['동부검거건수','서부검거건수','남부검거건수','북부검거건수','광산검거건수']
+            ,['동부미검거건수','서부미검거건수','남부미검거건수','북부미검거건수','광산미검거건수']]
+
+        print(self.total_graph_list)
+
+    # 관할별 발생건수 그래프
+    def generation_graph(self):
+        self.piegraph_ready()
+        ratio = [self.total_graph_list[0][0], self.total_graph_list[0][1], self.total_graph_list[0][2],
+                 self.total_graph_list[0][3], self.total_graph_list[0][4]]
+        labels = [self.total_graph_list[3][0], self.total_graph_list[3][1], self.total_graph_list[3][2],
+                  self.total_graph_list[3][3], self.total_graph_list[3][4]]
+        explode = [0.03, 0.03, 0.03, 0.03, 0.03]
+
+        plt.pie(ratio, labels=labels, autopct='%.1f%%', explode=explode)
+        plt.title(f'관할별 {self.total_graph_list[4][0]}')
+        plt.show()
+    # 관할별 검거건수, 미검거건수 그래프
+    def arrest_unarrest_graph(self):
+        self.piegraph_ready()
+        ratio = [self.total_graph_list[1][0], self.total_graph_list[1][1], self.total_graph_list[1][2],
+                self.total_graph_list[1][3], self.total_graph_list[1][4], self.total_graph_list[2][0],
+                 self.total_graph_list[2][1],self.total_graph_list[2][2],self.total_graph_list[2][3],
+                 self.total_graph_list[2][4]]
+        labels = [self.total_graph_list[5][0], self.total_graph_list[5][1], self.total_graph_list[5][2],
+                self.total_graph_list[5][3], self.total_graph_list[5][4],self.total_graph_list[6][0],
+                self.total_graph_list[6][1], self.total_graph_list[6][2],self.total_graph_list[6][3],
+                self.total_graph_list[6][4]]
+
+        explode = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+
+        plt.pie(ratio, labels=labels, autopct='%.1f%%', explode=explode)
+        plt.title(f'관할별 {self.total_graph_list[4][1]}')
+        plt.show()
+
     def con(self):
         con = pymysql.connect(host='localhost', user='root', password='1234',
                               db='crime', charset='utf8')  # 한글처리 (charset = 'utf8')
@@ -48,6 +127,7 @@ class WindowClass(QMainWindow, form_class) :
         sql = "Select * from `crime`.`category`"  # case2
         cur.execute(sql)
         self.a = cur.fetchall()
+        print(self.a)
     def fin(self):
         self.stackedWidget.setCurrentIndex(1)
         self.tableWidget.setRowCount(0)
