@@ -31,34 +31,21 @@
       <rect>
        <x>170</x>
        <y>160</y>
-       <width>131</width>
-       <height>61</height>
+       <width>251</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="text">
       <string>범죄율 보기</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="guilb2">
-     <property name="geometry">
-      <rect>
-       <x>430</x>
-       <y>160</y>
-       <width>131</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>i</string>
-     </property>
-    </widget>
     <widget class="QPushButton" name="guilb3">
      <property name="geometry">
       <rect>
-       <x>720</x>
+       <x>630</x>
        <y>160</y>
-       <width>131</width>
-       <height>61</height>
+       <width>251</width>
+       <height>251</height>
       </rect>
      </property>
      <property name="text">
@@ -80,7 +67,6 @@
     </widget>
     <zorder>backimg</zorder>
     <zorder>guilb</zorder>
-    <zorder>guilb2</zorder>
     <zorder>guilb3</zorder>
    </widget>
    <widget class="QWidget" name="page_2">
@@ -190,6 +176,9 @@
        <height>768</height>
       </rect>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -238,6 +227,8 @@ p, li { white-space: pre-wrap; }
      </property>
     </widget>
     <zorder>backimg2</zorder>
+    <zorder>generation_btn</zorder>
+    <zorder>arrest_unarrest_btn</zorder>
     <zorder>lineEdit1</zorder>
     <zorder>tableWidget</zorder>
     <zorder>back1</zorder>

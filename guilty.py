@@ -1,14 +1,12 @@
 import pymysql
 import matplotlib.pyplot as plt
 from matplotlib import font_manager, rc
-import sys
 from PyQt5.QtWidgets import *
-from PyQt5 import uic
 from PyQt5.QtGui import *
 import urllib.request
 from PyQt5 import QtWidgets, uic
 from PyQt5.QtCore import Qt
-
+from ElisaBluebell_test import CrimeTablePage
 import pyqtgraph as pg
 import sys
 
@@ -41,6 +39,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.lineEdit2.returnPressed.connect(self.ins)
         self.back1.clicked.connect(self.back)
         self.guilb.clicked.connect(self.back2)
+        self.guilb3.clicked.connect(self.another_path)
         self.back_2.clicked.connect(self.back)
         self.delb.clicked.connect(self.del1)
         self.statusbar = self.statusBar()
@@ -285,7 +284,8 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.widget.plot([1, 2, 3, 4, 5], [gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]], pen='b',symbol='o')
         if num==3:
             self.widget.plot([0,1,2,3,4,5,6],[plus,plus,plus,plus,plus,plus,plus], pen='r',fillLevel=0,fillBrush=(255,255,255,70))
-
+    def another_path(self):
+        widget.setCurrentIndex(1)
     def img(self):
         urlString = 'https://images.chosun.com/resizer/NP8DFExtYcd9QKP1fJrf9YBDC2c=/1200x630/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UUXIQJGYI5BN7E6DWOERW5YNAY.JPG'
         imageFromWeb = urllib.request.urlopen(urlString).read()
@@ -300,6 +300,16 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
 if __name__ == "__main__" :
 
     app = QApplication(sys.argv)
-    myWindow = WindowClass()
-    myWindow.show()
+    widget = QtWidgets.QStackedWidget()
+    Window1 = WindowClass()
+    Window2 = CrimeTablePage()
+
+    widget.addWidget(Window1)
+    widget.addWidget(Window2)
+
+    widget.setFixedHeight(768)
+    widget.setFixedWidth(1024)
+
+    widget.show()
+    # myWindow.show()
     app.exec_()
