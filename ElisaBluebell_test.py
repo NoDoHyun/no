@@ -40,6 +40,11 @@ class CrimeTablePage(QWidget):
         self.bookboo_btn.clicked.connect(self.bookboograph)
         self.namboo_btn.clicked.connect(self.namboograph)
         self.gwangsan_btn.clicked.connect(self.gwangsangraph)
+        # 버튼 스위치
+        # 검색 버튼 클릭시 검색 기능 실행
+        self.search_btn.clicked.connect(self.table2_search)
+        # 검색창 엔터시 검색 기능 실행
+        self.search_line.returnPressed.connect(self.table2_search)
 
     def dongboograph(self):
         self.graph(0)
@@ -69,7 +74,6 @@ class CrimeTablePage(QWidget):
 
         # 마지막 리스트에 관서명 넣기
         self.graph_list.insert(6, ['동부', '남부', '서부', '광산', '북부'])
-        print(self.graph_list)
 
     # 0.동부 1.남부 2.서부 3.광산 4.북부
     def graph(self, k):
@@ -189,8 +193,29 @@ class CrimeTablePage(QWidget):
             # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
             self.crime_table.setItem(i, 0, QTableWidgetItem(str(self.cctv_db[i][3])))
             self.crime_table.setItem(i, 1, QTableWidgetItem(str(self.cctv_db[i][0])))
-            self.crime_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][2])))
-            self.crime_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][1])))
+            self.crime_table.setItem(i, 2, QTableWidgetItem(str(self.cctv_db[i][1])))
+            self.crime_table.setItem(i, 3, QTableWidgetItem(str(self.cctv_db[i][2])))
+
+    def table2_search(self):
+        search_result = []
+        self.crime_table.clear()
+        # CCTV 정보 표시를 위한 4개의 열을 가짐
+        self.crime_table.setColumnCount(4)
+        # 표의 크기는 종합정보표와 같음
+        self.crime_table.setGeometry(130, 405, 754, 205)
+        self.crime_table.setHorizontalHeaderLabels(['카메라 대수', '관리기관명', '소재지도로명주소', '소재지번지주소'])
+        for i in range(len(self.cctv_db)):
+            if self.search_line.text() in self.cctv_db[i][1] or self.search_line.text() in self.cctv_db[i][2]:
+                search_result.append(self.cctv_db[i])
+        # cctv_db 튜플의 길이만큼 행 설정
+        self.crime_table.setRowCount(len(search_result))
+        for i in range(len(search_result)):
+            # 단순 반복 입력이었으나 db 순서가 꼬여 원하는대로 칼럼을 맞춰주기위해 수동으로 칼럼 설정
+            self.crime_table.setItem(i, 0, QTableWidgetItem(str(search_result[i][3])))
+            self.crime_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
+            self.crime_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
+            self.crime_table.setItem(i, 3, QTableWidgetItem(str(search_result[i][2])))
+
 
     # 버튼 세팅 함수
     def set_btn(self):
