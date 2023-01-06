@@ -4,8 +4,10 @@ from matplotlib import font_manager, rc
 import sys
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-
+from PyQt5.QtGui import *
+import urllib.request
 from PyQt5 import QtWidgets, uic
+from PyQt5.QtCore import Qt
 
 import pyqtgraph as pg
 import sys
@@ -44,6 +46,86 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.statusbar = self.statusBar()
         self.gra2=[]
         self.con1()
+        self.img()
+
+        # 그래프 관련 버튼 클릭시 해당 메서드로 연결
+        self.generation_btn.clicked.connect(self.generation_graph)
+        self.arrest_unarrest_btn.clicked.connect(self.arrest_unarrest_graph)
+
+        # 그래프에 들어갈 내용 전체 리스트
+        self.total_graph_list=[]
+
+    # 파이차트 만들기 위해 비율 계산하는 매서드
+    def piegraph_ready(self):
+        generation_sum=0
+        arrest_sum=0
+        unarrest_sum=0
+        unarrest=[]
+        generation_list=[]
+        arrest_list=[]
+        unarrest_list=[]
+
+        # 발생건수 계 구하기
+        for i in range(len(self.a)):
+            generation_sum += self.a[i][1]
+        # 검거건수 계 구하기
+        for j in range(len(self.a)):
+            arrest_sum += self.a[j][2]
+        # 미검거건수 계 구하기
+        unarrest_sum=generation_sum - arrest_sum
+
+        # 미검거건수 리스트 만들기
+        for i in range(len(self.a)):
+            unarrest.append(self.a[i][1]-self.a[i][2])
+
+        # 발생건수, 전체발생건수 값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(self.a[i][1]/generation_sum) *100
+            generation_list.append(a)
+        # 검거건수, 발생건수값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(self.a[i][2]/generation_sum) *100
+            arrest_list.append(a)
+        # 미검거건수, 발생건수값에서 각 구별 퍼센트 값 구하기
+        for i in range(len(self.a)):
+            a=(unarrest[i]/generation_sum) *100
+            unarrest_list.append(a)
+
+        self.total_graph_list=[generation_list,arrest_list,unarrest_list,['동부','서부','남부','북부','광산']
+            ,['범죄 발생건수','범죄 검거/미검거건수'],['동부검거건수','서부검거건수','남부검거건수','북부검거건수','광산검거건수']
+            ,['동부미검거건수','서부미검거건수','남부미검거건수','북부미검거건수','광산미검거건수']]
+
+    # 관할별 발생건수 그래프
+    def generation_graph(self):
+        self.piegraph_ready()
+        ratio = [self.total_graph_list[0][0], self.total_graph_list[0][1], self.total_graph_list[0][2],
+                 self.total_graph_list[0][3], self.total_graph_list[0][4]]
+        labels = [self.total_graph_list[3][0], self.total_graph_list[3][1], self.total_graph_list[3][2],
+                  self.total_graph_list[3][3], self.total_graph_list[3][4]]
+        explode = [0.03, 0.03, 0.03, 0.03, 0.03]
+
+        plt.pie(ratio, labels=labels, autopct='%.1f%%', explode=explode)
+        plt.title(f'관할별 {self.total_graph_list[4][0]}')
+        plt.show()
+
+    # 관할별 검거건수, 미검거건수 그래프
+    def arrest_unarrest_graph(self):
+        self.piegraph_ready()
+        ratio = [self.total_graph_list[1][0], self.total_graph_list[1][1], self.total_graph_list[1][2],
+                self.total_graph_list[1][3], self.total_graph_list[1][4], self.total_graph_list[2][0],
+                 self.total_graph_list[2][1],self.total_graph_list[2][2],self.total_graph_list[2][3],
+                 self.total_graph_list[2][4]]
+        labels = [self.total_graph_list[5][0], self.total_graph_list[5][1], self.total_graph_list[5][2],
+                self.total_graph_list[5][3], self.total_graph_list[5][4],self.total_graph_list[6][0],
+                self.total_graph_list[6][1], self.total_graph_list[6][2],self.total_graph_list[6][3],
+                self.total_graph_list[6][4]]
+
+        explode = [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05]
+
+        plt.pie(ratio, labels=labels, autopct='%.1f%%', explode=explode, startangle=260,
+                )
+        plt.title(f'관할별 {self.total_graph_list[4][1]}')
+        plt.show()
 
     def con1(self):
         self.con = pymysql.connect(host='localhost', user='root', password='1234',
@@ -203,7 +285,17 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
             self.widget.plot([1, 2, 3, 4, 5], [gra2[3],gra2[4],gra2[1],gra2[2],gra2[0]], pen='b',symbol='o')
         if num==3:
             self.widget.plot([0,1,2,3,4,5,6],[plus,plus,plus,plus,plus,plus,plus], pen='r',fillLevel=0,fillBrush=(255,255,255,70))
-        # plt.show()
+
+    def img(self):
+        urlString = 'https://images.chosun.com/resizer/NP8DFExtYcd9QKP1fJrf9YBDC2c=/1200x630/smart/cloudfront-ap-northeast-1.images.arcpublishing.com/chosun/UUXIQJGYI5BN7E6DWOERW5YNAY.JPG'
+        imageFromWeb = urllib.request.urlopen(urlString).read()
+        qPixmapVar = QPixmap()
+        qPixmapVar.loadFromData(imageFromWeb)
+        self.backimg.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.backimg2.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.backimg3.setPixmap(QPixmap(qPixmapVar).scaled(self.width(), self.height(), Qt.IgnoreAspectRatio))
+        self.label_2.setStyleSheet("background-color: white")
+        self.label_3.setStyleSheet("background-color: white")
 
 if __name__ == "__main__" :
 
