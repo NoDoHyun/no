@@ -38,6 +38,7 @@ class WindowClass(QMainWindow, form_class,QtWidgets.QWidget) :
         self.guilb2.clicked.connect(lambda: self.back(2))
         self.guilb3.clicked.connect(self.another_path)
         self.back_2.clicked.connect(lambda: self.back(0))
+        self.back3.clicked.connect(lambda: self.back(0))
         self.delb.clicked.connect(self.del1)
         # self.comboBox.currentTextChanged.connect(self.combo_select)
         self.statusbar = self.statusBar()
