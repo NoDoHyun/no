@@ -366,7 +366,7 @@ class CrimeTablePage(QWidget):
                 관리기관명="{self.cctv_table.item(self.selected_row[0], 1).text()}", 
                 소재지도로명주소="{self.cctv_table.item(self.selected_row[0], 2).text()}", 
                 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}" 
-                where 소재지지번주소="{self.cctv_table.item(self.selected_row[0], 3).text()}"''')
+                where 소재지지번주소="{self.cctv_db[self.selected_row[0]][2]}"''')
                 conn.commit()
                 # 적용한 업체를 리스트에서 제거
                 self.selected_row.remove(self.selected_row[0])
