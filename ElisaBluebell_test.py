@@ -396,7 +396,7 @@ class CrimeTablePage(QWidget):
         # cctv_db 리스트의 길이만큼 행 설정
         self.cctv_table.setRowCount(len(search_result))
         for i in range(len(search_result)):
-            # table2 DB와 칼럼 순서를 일치시키기 위해 수도
+            # table2 DB와 칼럼 순서를 일치시키기 위해 해당 셀에 들어갈 DB 위치를 직접 입력
             self.cctv_table.setItem(i, 0, QTableWidgetItem(str(search_result[i][3])))
             self.cctv_table.setItem(i, 1, QTableWidgetItem(str(search_result[i][0])))
             self.cctv_table.setItem(i, 2, QTableWidgetItem(str(search_result[i][1])))
