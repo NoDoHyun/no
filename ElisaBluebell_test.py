@@ -110,6 +110,8 @@ class CrimeTablePage(QWidget):
         # 검색을 위한 라인에딧 설정함
         self.search_line = QLineEdit(self)
         self.search_line.setGeometry(190, 380, 200, 20)
+        # 검색창 엔터시 검색 기능 실행
+        self.search_line.returnPressed.connect(self.table2_search)
 
     # 버튼 세팅 함수
     def set_btn(self):
@@ -140,8 +142,6 @@ class CrimeTablePage(QWidget):
         self.delete_btn.clicked.connect(self.table2_delete_item)
         self.go_back_btn.clicked.connect(self.go_back)
         self.insert_btn.clicked.connect(self.popup_insert_dialog)
-        # 검색창 엔터시 검색 기능 실행
-        self.search_line.returnPressed.connect(self.table2_search)
 
     # 라벨 세팅
     def set_label(self):
